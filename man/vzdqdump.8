@@ -1,0 +1,58 @@
+.TH vzdqdump 8 "Jul 18, 2005" "Virtuozzo" "Virtual Private Servers"
+
+.SH NAME
+\fBvzdqdump\fR, \fBvzdqload\fR \- dump, load user/group quotas
+.SH SYNOPSIS
+.TP
+\fBvzdqdump\fP [\fIgeneral_options\fP] \fIquota_id\fP [\fB-f\fR]
+[\fB-c\fR \fIquota_file\fR] { [\fB-G\fR] [\fB-U\fR] [\fB-T\fR] }
+.TP
+\fBvzdqload\fP [\fIgeneral_options\fP] \fIquota_id\fP
+[\fB-c\fR \fIquota_file\fR] { [\fB-G\fR] [\fB-U\fR] [\fB-T\fR] }
+
+.SH DESCRIPTION
+\fBvzdqdump\fP dumps user/group quota information obtained either 
+from a quota file or the kernel to stdout.
+.PP
+\fBvzdqload\fP loads user/group quota information provided by
+\fBvzdqdump\fP from stdin into quota file. Quota must be stopped at load.
+
+.SH OPTIONS
+.SS General
+.TP
+.B -h
+Print usage information.
+.TP
+.B -V
+Print utility version.
+.TP
+.B -q
+Quiet mode. Causes all warning and diagnostic messages to be suppressed.
+Only fatal errors are displayed.
+.TP
+.B -v
+Verbose mode.  Causes the utilities to print debugging messages about their
+progress. Multiple \fB-v\fP options increase verbosity. Maximum is 2.
+.SS Parameters
+.TP
+\fB\-f\fP
+Dump user/group quota information from kernel rather than quota file.
+.TP
+\fB\-c\fP \fIquota_file\fP
+Specifies quota file to process.
+.TP
+\fB\-G\fR, \fB--grace\fP
+Dump (load) user/group grace times.
+.TP
+\fB\-U\fR, \fB--limits\fP
+Dump (load) disk limits of users/groups.
+.TP
+\fB\-T\fR, \fB--exptimes\fP
+Dump (load) expiration times of users/groups.
+
+.SH DIAGNOSTICS
+.TP
+See \fBvzquota\fP(8)
+
+.SH COPYRIGHT
+Copyright (C) 2000-2005, SWsoft. Distributed under QPL.
