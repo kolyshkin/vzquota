@@ -208,7 +208,4 @@ int vzquotactl_ugid_setgrace(struct qf_data * data, int type, struct dq_info * l
 
 #endif
 
-extern int quotactl (int __cmd, const char *__special, int __id,
-		     caddr_t __addr) __THROW;
-
 #endif /* __VZQUOTA_H__ */

@@ -23,10 +23,10 @@
 #include <string.h>
 #include <asm/types.h>
 
-#include "kcompat.h"
-
 #include <linux/vzquota.h>
 #include <linux/vzctl_quota.h>
+
+#include "kcompat.h"
 
 
 #define QMAXDEVLEN 128

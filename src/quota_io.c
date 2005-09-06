@@ -972,9 +972,15 @@ int vzquotactl_ugid_setgrace(struct qf_data *data, int type, struct dq_info *vzd
 	inf.type = type;
 
 	err = vzquotactl_ugid_syscall(VZ_DQ_UGID_SETINFO, quota_id, 0, 0, &inf);
-	if (err == -EINVAL)
+	if (err == -EINVAL || err == -EPERM) {
+		struct mem_dqinfo _info;
+		memset(&_info, 0, sizeof(_info));
+		_info.dqi_bgrace = vzdqinfo->bexpire;
+		_info.dqi_igrace = vzdqinfo->iexpire;
+
 		err = quotactl_syscall(Q_SETGRACE, 
-				type, data->path, 0, (void *) &inf.dqi);
+				type, data->path, 0, (void *) &_info);
+	}
 	return err;
 }
 
@@ -990,9 +996,18 @@ int vzquotactl_ugid_setlimit(struct qf_data *data, int id, int type, struct dq_s
 	lim.id = id;
 
 	err = vzquotactl_ugid_syscall(VZ_DQ_UGID_SETLIMIT, quota_id, 0, 0, &lim);
-	if (err == -EINVAL)
+	if (err == -EINVAL || err == -EPERM) {
+		struct mem_dqblk dqb;
+		memset(&dqb, 0, sizeof(dqb));
+
+		dqb.dqb_bsoftlimit = vzdqlim->bsoftlimit;
+		dqb.dqb_bhardlimit = vzdqlim->bhardlimit;	
+		dqb.dqb_isoftlimit = vzdqlim->isoftlimit;
+		dqb.dqb_ihardlimit = vzdqlim->ihardlimit;	
+
 		err = quotactl_syscall(Q_SETQLIM,
 			type, data->path, id, (void *) &lim.dqb);
+	}
 	return err;
 }
 

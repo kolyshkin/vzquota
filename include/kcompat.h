@@ -2,36 +2,34 @@
 #define __KCOMPAT_H__
 
 /*
- * This header file defines kernel structures which used to be
- * defined in previous glibc-kernel-headers, but for some unknown
- * reason were removed from there in recent glibc.
- * vzquota requires these defines...
+ * This header file defines kernel structures for old quota interfaces
  */
-#ifndef IIF_BGRACE
+#ifndef Q_SETGRACE
 
-#define IIF_BGRACE	1
-#define IIF_IGRACE	2
-#define QIF_BLIMITS	1
-#define QIF_ILIMITS	4
-#define QIF_LIMITS	(QIF_BLIMITS | QIF_ILIMITS)
+#define Q_SETGRACE 0x0B00       /* set inode and block grace */
+#define Q_SETQLIM  0x0700       /* set limits */
 
-struct if_dqblk {
-	__u64 dqb_bhardlimit;
-	__u64 dqb_bsoftlimit;
-	__u64 dqb_curspace;
-	__u64 dqb_ihardlimit;
-	__u64 dqb_isoftlimit;
-	__u64 dqb_curinodes;
-	__u64 dqb_btime;
-	__u64 dqb_itime;
-	__u32 dqb_valid;
+
+/* This is in-memory copy of quota block. See meaning of entries above */
+struct mem_dqblk {
+	unsigned int dqb_ihardlimit;
+	unsigned int dqb_isoftlimit;
+	unsigned int dqb_curinodes;
+	unsigned int dqb_bhardlimit;
+	unsigned int dqb_bsoftlimit;
+	qsize_t dqb_curspace;
+	__kernel_time_t dqb_btime;
+	__kernel_time_t dqb_itime;
 };
 
-struct if_dqinfo {
-	__u64 dqi_bgrace;
-	__u64 dqi_igrace;
-	__u32 dqi_flags;
-	__u32 dqi_valid;
+/* Inmemory copy of version specific information */
+struct mem_dqinfo {
+	unsigned int dqi_bgrace;
+	unsigned int dqi_igrace;
+	unsigned int dqi_flags;
+	unsigned int dqi_blocks;
+	unsigned int dqi_free_blk;
+	unsigned int dqi_free_entry;
 };
 
 #endif
