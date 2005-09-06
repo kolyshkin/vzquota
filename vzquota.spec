@@ -1,3 +1,5 @@
+%define _kernel_ver 2.6.8-022stab033.2
+
 Summary: Virtuozzo disk quota control utility
 Name: vzquota
 Version: 2.7.0
@@ -5,10 +7,10 @@ Release: 6
 Vendor: SWsoft
 License: QPL
 Group: System Environment/Kernel
-Source: vzquota-%{version}-%{release}.tar.bz2
+Source: vzquota.tar.bz2
 ExclusiveOS: Linux
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildPrereq: vzkernel-headers
+BuildPrereq: vzkernel
 Requires: vzkernel
 
 %description
@@ -19,10 +21,10 @@ This utility allows system administator to control disk quotas
 for such environments.
 
 %prep
-%setup -n %{name}-%{version}-%{release}
+%setup -n %{name}
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" make
+CFLAGS="$RPM_OPT_FLAGS -I/lib/modules/%{_kernel_ver}/build/include" make
 
 %install
 rm -rf $RPM_BUILD_ROOT
