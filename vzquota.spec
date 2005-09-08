@@ -7,7 +7,7 @@ Release: 6
 Vendor: SWsoft
 License: QPL
 Group: System Environment/Kernel
-Source: vzquota.tar.bz2
+Source: vzquota-%{version}-%{release}.tar.bz2 
 ExclusiveOS: Linux
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildPrereq: vzkernel
@@ -21,7 +21,7 @@ This utility allows system administator to control disk quotas
 for such environments.
 
 %prep
-%setup -n %{name}
+%setup -n %{name}-%{version}-%{release}
 
 %build
 CFLAGS="$RPM_OPT_FLAGS -I/lib/modules/%{_kernel_ver}/build/include" make
