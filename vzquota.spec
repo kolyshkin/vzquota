@@ -1,16 +1,14 @@
-%define _kernel_ver 2.6.8-022stab033.2
-
 Summary: Virtuozzo disk quota control utility
 Name: vzquota
 Version: 2.7.0
-Release: 6
+Release: 7
 Vendor: SWsoft
 License: QPL
 Group: System Environment/Kernel
 Source: vzquota-%{version}-%{release}.tar.bz2 
 ExclusiveOS: Linux
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildPrereq: vzkernel
+BuildPrereq: vzkernel >= 2.6.8-022stab034
 Requires: vzkernel
 
 %description
@@ -24,7 +22,7 @@ for such environments.
 %setup -n %{name}-%{version}-%{release}
 
 %build
-CFLAGS="$RPM_OPT_FLAGS -I/lib/modules/%{_kernel_ver}/build/include" make
+CFLAGS="$RPM_OPT_FLAGS" make
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -46,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %{_mandir}/man8/vzdqload.8*
 
 %changelog
+* Fri Sep 09 2005 Dmitry Mishin <dim_at_sw.ru> 2.7.0-7
+- fixes to use new vzkernel headers provisioning scheme
+
 * Thu Aug 11 2005 Dmitry Mishin <dim_at_sw.ru> 2.7.0-5
 - reworked hard links check
 - mans fixes

@@ -12,9 +12,11 @@ PREFIX = /usr
 SBINDIR = ${PREFIX}/sbin
 VARDIR = /var
 MANDIR = ${PREFIX}/share/man
+VZKERNEL_HEADERS ?= /lib/modules/$(shell uname -r)/build/include
 
 #DEBUG = -D_DEBUG -g3 -ggdb3 -p -pg
-CFLAGS += -pipe -I../include -g -Wall -Werror -Wformat -D_FILE_OFFSET_BITS=64 \
+CFLAGS += -pipe -I../include -I$(VZKERNEL_HEADERS) \
+	-g -Wall -Werror -Wformat -D_FILE_OFFSET_BITS=64 \
 	-D_LARGEFILE64_SOURCE -DL2 $(DEBUG)
 
 
