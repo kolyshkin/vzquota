@@ -849,7 +849,7 @@ ugid_loop:
 			dq_buf[j] = dq;
 		}
 		free(buf);
-		debug(LOG_DEBUG, "received ugids were processed\n", rc);
+		debug(LOG_DEBUG, "received %d ugids were processed\n", rc);
 
 		/* delete entries destroyed by kernel */
 		drop_ugid_by_flags(ugid_stat, UGID_LOADED);
