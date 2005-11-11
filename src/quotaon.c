@@ -141,7 +141,7 @@ static char quotaugidset_usage[] =
 "Usage: \n"
 "\t%s %s <quotaid> [-c <quota_file>]" " [-u|-g] <ugid>\n"
 "\t\t<block_soft_limit> <block_hard_limit> <inode_soft_limit> <inode_hard_limit>\n"
-"\t%1$s %2$s <quotaid> [-c <quota_file>]" " -t [-u|-g] \n"
+"\t%1$s %2$s <quotaid> [-c <quota_file>] -t\n"
 "\t\t<block-grace> <inode-grace>\n";
 
 static char quotaugidset_short_options[] = "c:ugt";
