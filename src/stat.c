@@ -189,7 +189,8 @@ void print_ugid_status(struct qf_data *qd)
 		       q->info.buf_size,
 		       q->info.config.limit);
 		printf("%s %s\n", "Ugid limit was exceeded:",
-		       (q->info.config.flags & VZDQUG_FIXED_SET) ? "yes" : "no");
+		       (q->info.config.count >= q->info.config.limit) ?
+		       "yes" : "no");
 	}
 
 	/* grace times */
