@@ -1001,12 +1001,12 @@ int vzquotactl_ugid_setlimit(struct qf_data *data, int id, int type, struct dq_s
 		memset(&dqb, 0, sizeof(dqb));
 
 		dqb.dqb_bsoftlimit = vzdqlim->bsoftlimit;
-		dqb.dqb_bhardlimit = vzdqlim->bhardlimit;	
+		dqb.dqb_bhardlimit = vzdqlim->bhardlimit;
 		dqb.dqb_isoftlimit = vzdqlim->isoftlimit;
-		dqb.dqb_ihardlimit = vzdqlim->ihardlimit;	
+		dqb.dqb_ihardlimit = vzdqlim->ihardlimit;
 
 		err = quotactl_syscall(Q_SETQLIM,
-			type, data->path, id, (void *) &lim.dqb);
+			type, data->path, id, (void *) &dqb);
 	}
 	return err;
 }
