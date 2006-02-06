@@ -1,7 +1,7 @@
 Summary: Virtuozzo disk quota control utility
 Name: vzquota
 Version: 3.0.0
-Release: 1
+Release: 2
 Vendor: SWsoft
 License: QPL
 Group: System Environment/Kernel
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %{_mandir}/man8/vzdqload.8*
 
 %changelog
+* Mon Feb  6 2006 Kir Kolyshkin <kir-at-openvz.org> 3.0.0-2
+- fixed gcc4 compilation issue
+
 * Fri Sep 09 2005 Dmitry Mishin <dim_at_sw.ru> 2.7.0-7
 - fixes to use new vzkernel headers provisioning scheme
 

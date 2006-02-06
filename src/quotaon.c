@@ -1221,7 +1221,7 @@ int quotaugidset_proc(int argc, char **argv)
 		quota_setugid(0, NULL, &info);
 	} else {
 		struct dq_stat stat;
-		int ugid;
+		unsigned int ugid;
 
 		/* get ugid */
 		if (argc != 5 
