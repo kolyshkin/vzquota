@@ -27,6 +27,7 @@ static char cmd_usage[] =
 "\tdrop       Delete quota limits from file\n"
 "\tsetlimit   Set quota limits for given quotaid\n"
 "\tsetlimit2  Set L2 quota limits for given quotaid and QUGID\n"
+"\treload2    Reload L2 quota limits from quota file for given quotaid\n"
 "\tstat       Show usage and quota limits for given quotaid\n"
 "\tshow       Show usage and quota limits from quota file\n";
 
@@ -41,6 +42,7 @@ static const struct cmd {
 	"drop", quotadrop_proc}, {
 	"setlimit", quotaset_proc}, {
 	"setlimit2", quotaugidset_proc}, {
+	"reload2", quotareloadugid_proc}, {
 	"stat", vestat_proc}, {
 	"show", quotashow_proc}, {
 	NULL, NULL}

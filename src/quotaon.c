@@ -177,6 +177,17 @@ static struct option quotadrop_long_options[] = {
 	{0, 0, 0, 0}
 };
 
+/* quota reload */
+
+static char quotareloadugid_usage[] =
+"Usage: %s %s <quotaid> [-c <quota_file>]\n";
+
+static char quotareloadugid_short_options[] = "-c:";
+static struct option quotareloadugid_long_options[] = {
+	{"quota-file", required_argument, NULL, 'c'},
+	{0, 0, 0, 0}
+};
+
 #ifndef L2
 static void clear_quotas(struct vz_quota_stat *stat)
 {
@@ -935,6 +946,87 @@ static void quota_drop()
 #endif //L2
 }
 
+#ifdef L2
+static void quota_reload_ugid()
+{
+	struct qf_data qd;
+	struct qf_data *temp_qd;
+	struct ugid_quota *ugid_stat;
+	struct dquot *dquot;
+	int fd;
+	int rc;
+	unsigned int i;
+
+	init_quota_data(&qd);
+
+	fd = open_quota_file(quota_id, config_file, O_RDWR);
+	if (fd < 0) {
+		if (errno == ENOENT)
+			exit(EC_NOQUOTAFILE);
+		else
+			exit(EC_QUOTAFILE);
+	}
+	/* we must read and write whole files cause of checksum */
+	if (check_quota_file(fd) < 0
+	    || read_quota_file(fd, &qd, IOF_ALL) < 0)
+		exit(EC_QUOTAFILE);
+
+	temp_qd = (struct qf_data *) xmalloc(sizeof(struct qf_data));
+	rc = quota_syscall_stat(temp_qd, 0);
+	if (rc < 0 || !(temp_qd->ugid_stat.info.config.flags & VZDQUG_ON)) {
+		free(temp_qd);
+		close_quota_file(fd);
+		free_quota_data(&qd);
+		return;
+	}
+	free(temp_qd);
+
+	ugid_stat = &qd.ugid_stat;
+	
+	/* set ugid config */
+	rc = vzquotactl_ugid_syscall(VZ_DQ_UGID_SETCONFIG, quota_id, 0, 0,
+			&(ugid_stat->info.config));
+	if (rc < 0)
+		error(EC_VZCALL, errno, "Quota ugid_setconfig syscall for id %d", quota_id);
+
+	/* set ugid graces and flags */
+	for (i = 0; i < MAXQUOTAS; i++) {
+		rc = vzquotactl_ugid_setgrace(&qd, i, &(ugid_stat->info.ugid_info[i]));
+		if (rc < 0)
+			error(EC_VZCALL, errno, "Quota ugid_setgrace syscall for id %d", quota_id);
+	}
+
+	/* set ugid limits */
+	reset_dquot_search();
+	while( (dquot = get_next_dquot(ugid_stat)) != NODQUOT) {
+		struct vz_quota_iface *s;
+		struct dq_stat dqstat;
+
+		s = &dquot->obj.istat;
+		/* limits */
+		memset(&dqstat, 0, sizeof(dqstat));
+		dqstat.bsoftlimit = ker2block(s->qi_stat.bsoftlimit);
+		dqstat.bhardlimit = ker2block(s->qi_stat.bhardlimit);
+		dqstat.isoftlimit = s->qi_stat.isoftlimit;
+		dqstat.ihardlimit = s->qi_stat.ihardlimit;
+		dqstat.btime = s->qi_stat.btime;
+		dqstat.itime = s->qi_stat.itime;
+		if (vzquotactl_ugid_setlimit(&qd, s->qi_id, s->qi_type, &dqstat) < 0)
+			error(EC_VZCALL, errno, "quotactl failed");
+	}
+
+	/* we must read and write whole files cause of checksum */
+	rc = write_quota_file(fd, &qd, IOF_ALL);
+	if (rc < 0)
+		exit(EC_QUOTAFILE);
+
+	close_quota_file(fd);
+	free_quota_data(&qd);
+
+	return;
+}
+#endif
+
 static void quota_set()
 {
 	int fd;
@@ -1254,3 +1346,17 @@ int quotadrop_proc(int argc, char **argv)
 	quota_drop();
 	return 0;
 }
+
+#ifdef L2
+int quotareloadugid_proc(int argc, char **argv)
+{
+	parse_options(argc, argv, quotareloadugid_short_options,
+		      quotareloadugid_long_options, quotareloadugid_usage, 0);
+
+	if (!(option & FL_VEID))
+		usage(quotareloadugid_usage);
+
+	quota_reload_ugid();
+	return 0;
+}
+#endif

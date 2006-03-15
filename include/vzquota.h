@@ -88,6 +88,7 @@ int quotaon_proc(int argc, char **argv);
 int quotaoff_proc(int argc, char **argv);
 int quotaset_proc(int argc, char **argv);
 int quotaugidset_proc(int argc, char **argv);
+int quotareloadugid_proc(int argc, char **argv);
 int quotainit_proc(int argc, char **argv);
 int quotadrop_proc(int argc, char **argv);
 
