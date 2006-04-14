@@ -3,7 +3,7 @@ Name: vzquota
 Version: 3.0.0
 Release: 3
 Vendor: SWsoft
-License: QPL
+License: GPL
 Group: System Environment/Kernel
 Source: vzquota-%{version}-%{release}.tar.bz2 
 ExclusiveOS: Linux
