@@ -1,7 +1,7 @@
 Summary: Virtuozzo disk quota control utility
 Name: vzquota
 Version: 3.0.0
-Release: 3
+Release: 4
 Vendor: SWsoft
 License: GPL
 Group: System Environment/Kernel
