@@ -36,7 +36,7 @@ $(TARBALL): clean-all
 	rm -f ../$(NAMEVER)
 	ln -s $(NAME) ../$(NAMEVER)
 	tar --directory .. --exclude CVS --exclude doc \
-  	   --exclude $(TARBALL) -cvhjf $(TARBALL) $(NAMEVER)
+  	   --exclude $(TARBALL) --exclude .git -cvhjf $(TARBALL) $(NAMEVER)
 	rm -f ../$(NAMEVER)
 
 -include .depend
