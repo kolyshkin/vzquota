@@ -1,7 +1,7 @@
 Summary: Virtuozzo disk quota control utility
 Name: vzquota
 Version: 3.0.0
-Release: 4
+Release: 5
 Vendor: SWsoft
 License: GPL
 Group: System Environment/Kernel
@@ -44,6 +44,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %{_mandir}/man8/vzdqload.8*
 
 %changelog
+* Tue Apr 18 2006 Kir Kolyshkin <kir-at-openvz.org> 3.0.0-5
+- fixed license in man pages
+
 * Wed Mar 15 2006 Andrey Mirkin <amirkin-at-sw.ru> 3.0.0-3
 - added new function to reload 2nd level quota
 
