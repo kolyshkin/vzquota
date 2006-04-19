@@ -1,14 +1,13 @@
 Summary: Virtuozzo disk quota control utility
 Name: vzquota
 Version: 3.0.0
-Release: 5
+Release: 6
 Vendor: SWsoft
 License: GPL
 Group: System Environment/Kernel
 Source: vzquota-%{version}-%{release}.tar.bz2 
 ExclusiveOS: Linux
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildPrereq: vzkernel >= 2.6.8-022stab034
 Requires: vzquotamod
 
 %description
