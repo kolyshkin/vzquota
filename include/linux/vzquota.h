@@ -20,7 +20,7 @@
 #define _VZDQUOTA_H
 
 #include <linux/types.h>
-#include <linux/quota.h>
+#include <sys/quota.h>
 
 /* vzquotactl syscall commands */
 #define VZ_DQ_CREATE		5 /* create quota master block */
@@ -98,14 +98,33 @@ struct vz_quota_ugid_stat {
 	unsigned int	flags;	
 };
 
+struct _if_dqblk {
+        u_int64_t dqb_bhardlimit;
+        u_int64_t dqb_bsoftlimit;
+        u_int64_t dqb_curspace;
+        u_int64_t dqb_ihardlimit;
+        u_int64_t dqb_isoftlimit;
+        u_int64_t dqb_curinodes;
+        u_int64_t dqb_btime;
+        u_int64_t dqb_itime;
+        u_int32_t dqb_valid;
+};
+
 struct vz_quota_ugid_setlimit {
 	unsigned int	type;	/* quota type (USR/GRP) */
 	unsigned int	id;	/* ugid */
-	struct if_dqblk dqb;	/* limits info */
+	struct _if_dqblk dqb;	/* limits info */
+};
+
+struct _if_dqinfo {
+        u_int64_t dqi_bgrace;
+        u_int64_t dqi_igrace;
+        u_int32_t dqi_flags;
+        u_int32_t dqi_valid;
 };
 
 struct vz_quota_ugid_setinfo {
 	unsigned int	type;	/* quota type (USR/GRP) */
-	struct if_dqinfo dqi;	/* grace info */
+	struct _if_dqinfo dqi;	/* grace info */
 };
 #endif /* _VZDQUOTA_H */

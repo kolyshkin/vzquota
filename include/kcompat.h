@@ -35,7 +35,7 @@ struct mem_dqblk {
 	unsigned int dqb_curinodes;
 	unsigned int dqb_bhardlimit;
 	unsigned int dqb_bsoftlimit;
-	qsize_t dqb_curspace;
+	__u64 dqb_curspace;
 	__kernel_time_t dqb_btime;
 	__kernel_time_t dqb_itime;
 };

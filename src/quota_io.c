@@ -943,7 +943,7 @@ int quota_syscall_setlimit(struct qf_data *qd, int no_stat, int no_ugid_stat)
 }
 
 static void dqstat2dqblk(struct dq_stat * ulimit,
-		    struct if_dqblk * dqb) {
+		    struct _if_dqblk * dqb) {
 	dqb->dqb_bsoftlimit = ulimit->bsoftlimit;
 	dqb->dqb_bhardlimit = ulimit->bhardlimit;	
 	dqb->dqb_isoftlimit = ulimit->isoftlimit;
@@ -951,7 +951,7 @@ static void dqstat2dqblk(struct dq_stat * ulimit,
 }
 
 static void vzdqinfo2dqinfo(struct dq_info * info,
-			    struct if_dqinfo * dqi) {
+			    struct _if_dqinfo * dqi) {
 	dqi->dqi_bgrace = info->bexpire;
 	dqi->dqi_igrace = info->iexpire;
 }
