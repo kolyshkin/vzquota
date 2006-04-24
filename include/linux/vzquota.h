@@ -20,7 +20,7 @@
 #define _VZDQUOTA_H
 
 #include <linux/types.h>
-#include <sys/quota.h>
+#include <linux/quota.h>
 
 /* vzquotactl syscall commands */
 #define VZ_DQ_CREATE		5 /* create quota master block */
