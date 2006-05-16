@@ -24,7 +24,8 @@ MANDIR = ${PREFIX}/share/man
 #DEBUG = -D_DEBUG -g3 -ggdb3 -p -pg
 CFLAGS += -pipe -I../include  \
 	-g -Wall -Werror -Wformat -D_FILE_OFFSET_BITS=64 \
-	-D_LINUX_QUOTA_VERSION=6 -D_LARGEFILE64_SOURCE -DL2 $(DEBUG)
+	-D_LINUX_QUOTA_VERSION=6 -D_LARGEFILE64_SOURCE -DL2 \
+	-DVARDIR=\"$(VARDIR)\" $(DEBUG)
 
 
 OBJS_main = common.o quota_io.o syscall.o \

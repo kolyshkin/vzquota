@@ -20,8 +20,10 @@
 #define __VZQUOTA_H__
 
 #include "vzquota.h"
-
-#define VZQUOTA_FILES_PATH "/var/vzquota"
+#ifndef VARDIR
+#define VARDIR		"/var"
+#endif
+#define VZQUOTA_FILES_PATH VARDIR "/vzquota"
 #define VZQUOTA_FILE_NAME "quota"
 
 #ifndef L2
