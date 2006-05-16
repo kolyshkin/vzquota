@@ -1,0 +1,6 @@
+vzquota (3.0.0.7-1) unstable; urgency=low
+
+  * Initial release, closes: #360867.
+
+ -- Ola Lundqvist <opal@debian.org>  Tue, 25 Apr 2006 21:38:05 +0200
+
