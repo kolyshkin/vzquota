@@ -1,11 +1,11 @@
 Summary: Virtuozzo disk quota control utility
 Name: vzquota
-Version: 3.0.0
-Release: 7
+Version: 3.0.8
+Release: 1
 Vendor: SWsoft
 License: GPL
 Group: System Environment/Kernel
-Source: vzquota-%{version}-%{release}.tar.bz2 
+Source: vzquota-%{version}.tar.bz2 
 ExclusiveOS: Linux
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 Requires: vzquotamod
@@ -18,7 +18,7 @@ This utility allows system administator to control disk quotas
 for such environments.
 
 %prep
-%setup -n %{name}-%{version}-%{release}
+%setup
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" make

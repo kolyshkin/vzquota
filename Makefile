@@ -19,8 +19,7 @@ SRCDIR=src
 NAME=vzquota
 SPEC=$(NAME).spec
 VERSION=$(shell awk '/^Version:/{print $$2}' $(SPEC))
-RELEASE=$(shell awk '/^Release:/{print $$2}' $(SPEC))
-NAMEVER=$(NAME)-$(VERSION)-$(RELEASE)
+NAMEVER=$(NAME)-$(VERSION)
 
 TARBALL=$(NAMEVER).tar.bz2
 
