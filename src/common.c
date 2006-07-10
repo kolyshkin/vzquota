@@ -416,7 +416,7 @@ char* globolize_path(char *path)
 int parse_options(int argc, char **argv, char *short_options,
 		   struct option *long_options, char *opt_usage, int cmd_type)
 {
-	char c;
+	int c;
 
 	option = 0;
 	memset(&limits, 0, sizeof(limits));
