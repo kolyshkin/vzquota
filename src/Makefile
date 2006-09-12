@@ -26,7 +26,10 @@ CFLAGS += -pipe -I../include  \
 	-g -Wall -Werror -Wformat -D_FILE_OFFSET_BITS=64 \
 	-D_LINUX_QUOTA_VERSION=6 -D_LARGEFILE64_SOURCE -DL2 \
 	-DVARDIR=\"$(VARDIR)\" $(DEBUG)
-
+# We need -m64 for ppc64 in order to get proper ioctls
+ifeq ($(shell uname -m),ppc64)
+CFLAGS += -m64
+endif
 
 OBJS_main = common.o quota_io.o syscall.o \
 	main.o stat.o quotaon.o \
