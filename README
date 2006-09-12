@@ -1,0 +1,26 @@
+vzquota - OpenVZ quota management tool
+============================================
+
+	This tool allows to manage OpenVZ quotas - both guest environments
+	diskspace and inodes quotas and user/group quotas inside them.
+
+
+Requirements
+------------
+	kernel should provide vzdquota module.
+
+
+Installation
+------------
+	make install
+
+
+Usage
+-----
+	See man pages and info at http://openvz.org/
+
+
+Copyright
+---------
+	Copyright (C) 2003-2006 by SWsoft. All rights reserved.
+	For the licensing terms, see COPYING file.
