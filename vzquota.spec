@@ -1,6 +1,6 @@
 Summary: Virtuozzo disk quota control utility
 Name: vzquota
-Version: 3.0.8
+Version: 3.0.9
 Release: 1
 Vendor: SWsoft
 License: GPL
@@ -43,6 +43,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %{_mandir}/man8/vzdqload.8*
 
 %changelog
+* Mon Oct 09 2006 Dmitry Mishin <dim-at-openvz.org> 3.0.9-1
+- added README and NEWS files
+- deleted debian directory (requested by debian package maintainers)
+- fixed compilation on ppc64 platform.
+
 * Tue Apr 18 2006 Kir Kolyshkin <kir-at-openvz.org> 3.0.0-5
 - fixed license in man pages
 
