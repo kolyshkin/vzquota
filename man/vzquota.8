@@ -1,6 +1,6 @@
-.TH vzquota 8 "Jul 18, 2005" "Virtuozzo" "Virtual Private Servers"
+.TH vzquota 8 "Jul 18, 2005" "Virtuozzo" "Virtual Environment"
 .SH NAME
-vzquota - manipulate VPS disk quotas
+vzquota - manipulate VE disk quotas
 .SH SYNOPSIS
 .\" .TP
 \fBvzquota\fP [\fIquota_options\fP] \fIcommand quota_id\fR [\fIcommand_options\fP]
@@ -11,8 +11,8 @@ vzquota - manipulate VPS disk quotas
 .\" .TP
 .\" \fBvzquota setlimit2\fP \fIquota_id\fP [\fB-u\fR|\fB-g\fR] \fIugid\fP \fIblock-softlimit block-hardlimit inode-softlimit inode-hardlimit\fP
 .SH DESCRIPTION
-\fBvzquota\fP controls disk quotas for Virtuozzo Virtual Private Servers.
-These are per-VPS disk quotas set from Virtuozzo host system.
+\fBvzquota\fP controls disk quotas for Virtuozzo Virtual Environment.
+These are per-VE disk quotas set from Virtuozzo host system.
 
 The \fBquota_id\fP must be numeric-only identifier. Note, that Quota ID is 
 not the same as VE ID. One VE can mount several filesystems and each of them 
@@ -85,7 +85,7 @@ on. Stores new limits in the quota file.
 Show usage statistics and update it in quota file. Option \fB-f\fP causes to
 do not read and update quota file, just print statistics from kernel.
 Option \fB-t\fP specifies to show and update user/group based quota statistics
-for a VPS. Works on running VPS only. The command with \fB-t\fP option
+for a VE. Works on running VE only. The command with \fB-t\fP option
 flushes all quota statistics from kernel to file and thus may be used
 for backup purposes.
 .TP
@@ -99,7 +99,7 @@ All these options are required in \fBinit\fP command, and optionally
 accepted in \fBon\fP and \fBsetlimit\fP commands.
 .TP
 \fB\-s\fR, \fB--sub\-quotas\fP \fB1\fI|\fB0\fP
-Enables or disables user/group based quota inside the VPS. Here \fB1\fP means
+Enables or disables user/group based quota inside the VE. Here \fB1\fP means
 to enable, and \fB0\fP - to disable.
 By default user/group quota is disabled. This option is accepted by
 \fBinit\fP and \fBon\fP commands.
@@ -114,7 +114,7 @@ For \fBsetlimit2\fP command only. Limits will be applied to the specified
 .TP
 \fB\-u\fR, \fB--ugid\-limit\fP \fIlimit\fP
 For \fBon\fP and \fBsetlimit\fP commands only.
-Specifies maximum number of user and group IDs allowed in the VPS.
+Specifies maximum number of user and group IDs allowed in the VE.
 If the value is \fB0\fP, user/group quota will not be accounted.
 Default value is \fI0\fP. There is one note concerning \fBsetlimit\fP command.
 If first-level quota is running, second-level quota is active
