@@ -22,10 +22,8 @@
 char *command_name;
 const char *program_name = "vzquota";
 
-static char usg[] = 
-"Usage: %s [options] command quotaid [command-options-and-arguments]\n";
-
 static char cmd_usage[] =
+"Usage: %s [options] command quotaid [command-options-and-arguments]\n\n"
 "vzquota commands are:\n"
 "\tinit       Initialize quota data for given quotaid\n"
 "\ton         Turn on quota accounting for given quotaid\n"
@@ -59,7 +57,7 @@ int main(int argc, char **argv)
 	int err;
 	const struct cmd *cm;
 
-	parse_global_options(&argc, &argv, usg);
+	parse_global_options(&argc, &argv, cmd_usage);
 
 	/* Look up the command name. */
 	command_name = argv[0];
