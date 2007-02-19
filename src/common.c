@@ -160,29 +160,34 @@ char *xstrdup(const char* s)
 
 int str2uint(char *str, unsigned int *number)
 {
+	char *p;
+
 	ASSERT(str && number);
-	if (sscanf(str, "%u", number) != 1)
+	*number = strtol(str, &p, 10);
+	if (*str == '\0' || *p != '\0')
 		return -1;
 	return 0;
 }
 
 int str2u32(char *str, __u32 * number)
 {
-	unsigned int i;
+	char *p;
+
 	ASSERT(str && number);
-	if (sscanf(str, "%u", &i) != 1)
+	*number = strtol(str, &p, 10);
+	if (*str == '\0' || *p != '\0')
 		return -1;
-	*number = i;
 	return 0;
 }
 
 int str2u64(char *str, __u64 * number)
 {
-	unsigned long long i;
+	char *p;
+
 	ASSERT(str && number);
-	if (sscanf(str, "%llu", &i) != 1)
+	*number = strtoll(str, &p, 10);
+	if (*str == '\0' || *p != '\0')
 		return -1;
-	*number = i;
 	return 0;
 }
 

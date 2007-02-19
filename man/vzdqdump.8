@@ -17,6 +17,10 @@ from a quota file or the kernel to stdout.
 \fBvzdqload\fP loads user/group quota information provided by
 \fBvzdqdump\fP from stdin into quota file. Quota must be stopped at load.
 
+The \fBquota_id\fP must be numeric-only identifier. Note, that Quota ID is
+not the same as VE ID. One VE can mount several filesystems and each of them
+can have it's own quotas.
+
 .SH OPTIONS
 .SS General
 .TP
