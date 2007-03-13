@@ -73,10 +73,7 @@ extern char *mount_point;
 extern char *config_file;
 
 extern struct vz_quota_stat limits;
-#ifdef L2
-//extern struct vz_quota_stat ugid_limits;
 extern struct vz_quota_ugid_stat ug_config;
-#endif
 
 extern char *command_name;
 extern const char* program_name;
@@ -92,7 +89,6 @@ extern const char* program_name;
 #define EC_LOCK			7
 #define EC_EXDEV		8
 
-#ifdef L2
 #define EC_UG_NOTRUN		9	/* quota is running but user/group quota is inactive */
 					/* this code is returned by "stat -t" command for information purposes
 					 * and does not indicate a error; DO NOT USE IT! */
@@ -102,7 +98,6 @@ extern const char* program_name;
 					 * and does not indicate a error; DO NOT USE IT! */
 
 #define EC_NOQUOTAFILE		11	/* quota file does not exist */
-#endif
 
 #define EC_ASSERT		255
 
@@ -151,9 +146,7 @@ void vdebug_print(int level, char *oformat, va_list pvar);
 void *xmalloc(size_t size);
 char *xstrdup(const char* s);
 
-#ifdef L2
 void *xrealloc(void *p, size_t size);
-#endif
 
 
 #define xfree(x) \
@@ -186,12 +179,6 @@ int parse_options(int argc, char **argv, char *short_options,
 void parse_global_options(int *argc, char ***argv, const char *usg);
 void version();
 void usage(const char *usg);
-
-/* type conversions were moved to include/vzquota.h */
-#ifndef L2
-#define size_view(x) ((__u64) ((x) << 10))
-#define block_view(x) ((__u32) ((x) >> 10))
-#endif
 
 typedef void (*func_cleaner_t) (void * data);
 void register_cleaner(func_cleaner_t func, void * data);

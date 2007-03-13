@@ -43,13 +43,6 @@
 #define QMAXTIMELEN 64
 
 
-#ifndef L2
-
-#define BLOCK_SIZE 1024
-#define STAT_BLOCK_SIZE 512
-
-#else //L2
-
 /* kernel space data type */
 typedef __u64 qint;
 
@@ -71,9 +64,6 @@ typedef __u64 qint;
 #define block2ker(x) (((qint) (x)) << BLOCK_BITS)
 #define ker2size(x) ((__u64) (x))
 #define ker2block(x) ((__u32) (((x) + BLOCK_SIZE - 1) >> BLOCK_BITS))
-
-#endif //L2
-
 
 /* defines ration between quota and stat block size */
 #define STAT_PER_QUOTA (BLOCK_SIZE / STAT_BLOCK_SIZE)
@@ -104,7 +94,6 @@ long vzquotactl_syscall(
 		struct vz_quota_stat *qstat,
 		const char *ve_root);
 
-#ifdef L2
 long vzquotactl_ugid_syscall(
 		int _cmd,                /* subcommand */
 		unsigned int _quota_id,  /* quota id where it applies to */
@@ -113,64 +102,8 @@ long vzquotactl_ugid_syscall(
 		unsigned int _ugid_size, /* size of ugid_buf array */
 		void *addr               /* user-level buffer */
 );
-#endif
 
 #define VZCTL_QUOTA_CTL_OLD	_IOWR(VZDQCTLTYPE, 0, struct vzctl_quotactl)
-
-#ifndef L2
-struct vz_quota_stat_old  {
-	/* bytes limits */
-	__u32	bhardlimit;	/* absolute limit on disk 1K blocks alloc */
-	__u32	bsoftlimit;	/* preferred limit on disk 1K blocks */
-	time_t	bexpire;	/* expire timeout for excessive disk use */
-	time_t	btime;		/* time limit for excessive disk use */
-	__u32	bcurrent;	/* current 1K blocks count */
-	/* inodes limits */
-	__u32	ihardlimit;	/* absolute limit on allocated inodes */
-	__u32	isoftlimit;	/* preferred inode limit */
-	__u32	icurrent;	/* current # allocated inodes */
-	time_t	iexpire;	/* expire timeout for excessive inode use */
-	time_t	itime;		/* time limit for excessive inode use */
-	/* behaviour options */
-	int	options;	/* see VZ_QUOTA_OPT_* defines */
-};
-
-#define quota_old2new(x)					\
-((struct vz_quota_stat) {					\
-		bhardlimit	: size_view((x)->bhardlimit),	\
-		bsoftlimit	: size_view((x)->bsoftlimit),	\
-		bexpire		: (x)->bexpire,			\
-		btime		: (x)->btime,			\
-		bcurrent	: size_view((x)->bcurrent),	\
-								\
-		ihardlimit	: (x)->ihardlimit,		\
-		isoftlimit	: (x)->isoftlimit,		\
-		iexpire		: (x)->iexpire,			\
-		itime		: (x)->itime,			\
-		icurrent	: (x)->icurrent,		\
-								\
-		options		: (x)->options			\
-	})
-
-#define quota_new2old(x)  						\
-((struct vz_quota_stat_old) {						\
-		bhardlimit	: block_view((x)->bhardlimit),		\
-		bsoftlimit	: block_view((x)->bsoftlimit),		\
-		bexpire		: (x)->bexpire,				\
-		btime		: (x)->btime,				\
-		bcurrent	: block_view((x)->bcurrent),		\
-									\
-		ihardlimit	: (x)->ihardlimit,			\
-		isoftlimit	: (x)->isoftlimit,			\
-		iexpire		: (x)->iexpire,				\
-		itime		: (x)->itime,				\
-		icurrent	: (x)->icurrent,			\
-									\
-		options		: (x)->options				\
-	})
-
-/* L2 */
-#else
 
 #define QUOTA_V3	3	/* current 2-level 32-bit 1K quota */
 #define QUOTA_V2	2	/* previous 1-level 64-bit byte quota */
@@ -215,8 +148,4 @@ struct vz_quota_stat_old1  {
 	/* behaviour options */
 	int	options;	/* see VZ_QUOTA_OPT_* defines */
 };
-/* L2 */
-#endif
-
-
 #endif /* __VZQUOTA_UTIL_H__ */

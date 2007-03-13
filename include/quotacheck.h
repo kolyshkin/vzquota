@@ -37,11 +37,7 @@ struct dir {
 
 struct scan_info {
 	/* external fields */
-#ifndef L2
-	loff_t size;
-#else
 	qint size;
-#endif
 	int inodes;
 
 	/* information (debug) fields */
@@ -52,9 +48,7 @@ struct scan_info {
 	/* internal fields */
 	struct dir *dir_stack;
 	struct hardlink *links_hash[HASHSIZE];
-#ifdef L2
 	struct ugid_quota *ugid_stat;
-#endif
 };
 
 void scan(struct scan_info *info, const char *mnt);

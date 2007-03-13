@@ -26,24 +26,6 @@
 
 /* quota stat, quota show */
 
-#ifndef L2
-
-static char vestat_usage[] =
-"Usage: %s %s quotaid\n"
-"\t(Specify the --help global option for a list of other help options)\n";
-
-static char quotashow_usage[] =
-"Usage: %s %s quotaid [-c file]\n"
-"\t(Specify the --help global option for a list of other help options)\n";
-
-static char vestat_short_options[] = "-c:";
-static struct option vestat_long_options[] = {
-	{"quota-file", required_argument, NULL, 'c'},
-	{0, 0, 0, 0}
-};
-
-#else//L2
-
 static char vestat_usage[] =
 "Usage: %s %s quotaid [-f] [-c file] [-t]\n"
 "\t(Specify the --help global option for a list of other help options)\n";
@@ -66,19 +48,9 @@ static struct option quotashow_long_options[] = {
 	{0, 0, 0, 0}
 };
 
-#endif //L2
-
 
 /* For printing '*' char when overlimit */
 
-#ifndef L2
-char overlim(__u64 usage, __u64 softlim, __u64 hardlim)
-{
-	if ((softlim && usage > softlim) || (hardlim && usage > hardlim))
-		return '*';
-	return ' ';
-}
-#else
 char b_overlim(qint usage, qint softlim, qint hardlim)
 {
 	if ((softlim && usage > softlim) || (hardlim && usage > hardlim))
@@ -92,35 +64,7 @@ char i_overlim(__u32 usage, __u32 softlim, __u32 hardlim)
 		return '*';
 	return ' ';
 }
-#endif
 
-#ifndef L2
-static void print_status(struct vz_quota_stat* qstat)
-{
-	char buf[QMAXTIMELEN];
-
-	printf("%11s %14s  %14s %14s %8s\n",
-		"resource", "usage", "softlimit", "hardlimit", "grace");
-
-	if (qstat->bcurrent <= qstat->bsoftlimit)
-		qstat->btime = 0;
-
-	difftime2str(qstat->btime, buf);
-	printf("%11s %14u%c %14u %14u %8s\n",
-		"1k-blocks", block_view(qstat->bcurrent),
-		overlim(qstat->bcurrent, qstat->bsoftlimit, qstat->bhardlimit),
-		block_view(qstat->bsoftlimit), block_view(qstat->bhardlimit), buf);
-	
-	if (qstat->icurrent <= qstat->isoftlimit)
-		qstat->itime = 0;
-
-	difftime2str(qstat->itime, buf);
-	printf("%11s %14u%c %14u %14u %8s\n",
-		"inodes", qstat->icurrent,
-		overlim(qstat->icurrent, qstat->isoftlimit, qstat->ihardlimit),
-		qstat->isoftlimit, qstat->ihardlimit, buf);
-}
-#else
 void print_status(struct qf_data *qd)
 {
 	char buf[QMAXTIMELEN];
@@ -279,26 +223,20 @@ void print_ugid_status(struct qf_data *qd)
 			buf1, status);
 	}
 }
-#endif
 
 int vestat_proc(int argc, char **argv)
 {
 	int fd = 0;
 	int rc = 0;
-#ifndef L2
-	struct vz_quota_stat qstat;
-#else
 	struct qf_data qd;
 
 	init_quota_data(&qd);
-#endif
 	parse_options(argc, argv, vestat_short_options,
 		      vestat_long_options, vestat_usage, 0);
 
 	if (!(option & FL_VEID))
 		usage(vestat_usage);
 
-#ifdef L2
 	/* if force option was supplied, we do not read and update quota file */
 	if (!(option & FL_FORCE)) {
 		fd = open_quota_file(quota_id, config_file, O_RDWR);
@@ -313,22 +251,7 @@ int vestat_proc(int argc, char **argv)
 		    || read_quota_file(fd, &qd, IOF_ALL) < 0)
 			exit(EC_QUOTAFILE);
 	}
-#endif
 
-#ifndef L2
-	if (vzquotactl_syscall(VE_QUOTA_GETSTAT, quota_id, &qstat, NULL) < 0) {
-		debug(LOG_WARNING, "Quota accounting is off, "
-			"try vzquota show id\n");
-		exit(EC_NOTRUN);
-	} else {
-		fd = open_quota_file(quota_id, config_file, O_RDWR);
-		if (fd < 0
-		    || check_quota_file(fd) < 0
-		    || write_quota_file(fd, NULL, &qstat, NULL) < 0)
-			exit(EC_QUOTAFILE);
-		close_quota_file(fd);
-	}
-#else
 	if (quota_syscall_stat(&qd, !(option & FL_SQT)) < 0) {
 		/* indicate that quota is off */
 		error(EC_NOTRUN, 0, "Quota accounting is off, "
@@ -339,11 +262,7 @@ int vestat_proc(int argc, char **argv)
 			exit(EC_QUOTAFILE);
 		close_quota_file(fd);
 	}
-#endif
 
-#ifndef L2
-	print_status(&qstat);
-#else
 	print_status(&qd);
 	if (option & FL_SQT) {
 		print_ugid_status(&qd);
@@ -354,7 +273,6 @@ int vestat_proc(int argc, char **argv)
 	}
 	
 	free_quota_data(&qd);
-#endif
 
 	/* indicate that VE and user/group quotas are on */
 	return rc;
@@ -364,14 +282,9 @@ int quotashow_proc(int argc, char **argv)
 {
 	int fd;
 	int rc = 0;
-#ifndef L2
-	struct vz_quota_stat qstat;
-	struct vz_quota_header head;
-#else
 	struct qf_data qd;
 
 	init_quota_data(&qd);
-#endif
 	parse_options(argc, argv, quotashow_short_options,
 		      quotashow_long_options, quotashow_usage, 0);
 
@@ -379,14 +292,6 @@ int quotashow_proc(int argc, char **argv)
 		usage(quotashow_usage);
 
 	fd = open_quota_file(quota_id, config_file, O_RDWR);
-#ifndef L2
-	if (fd < 0)
-		error(EC_QUOTAFILE, 0, 
-				"Quota file must exist for show command");
-	if (check_quota_file(fd) < 0
-	    || read_quota_file(fd, &head, &qstat, NULL, 0) < 0)
-		exit(EC_QUOTAFILE);
-#else
 	if (fd < 0) {
 		if (errno == ENOENT)
 			error(EC_NOQUOTAFILE, 0, "Quota file must exist for show command");
@@ -399,30 +304,19 @@ int quotashow_proc(int argc, char **argv)
 	if (check_quota_file(fd) < 0
 	    || read_quota_file(fd, &qd, IOF_ALL) < 0)
 		exit(EC_QUOTAFILE);
-#endif
 
-#ifndef L2
-	if (head.flags & QUOTA_ON)
-#else
 	if (qd.head.flags & QUOTA_ON)
-#endif
 		debug(LOG_WARNING, "Quota is running, so data reported from "
 			"quota file may not reflect current values\n");
 
-#ifdef L2
 	if (qd.head.flags & QUOTA_DIRTY)
 		rc = EC_QUOTADIRTY;
-#endif
 
-#ifndef L2
-	print_status(&qstat);
-#else
 	print_status(&qd);
 	if (option & FL_SQT)
 		print_ugid_status(&qd);
 
 	free_quota_data(&qd);
-#endif
 	close_quota_file(fd);
 	return rc;
 }

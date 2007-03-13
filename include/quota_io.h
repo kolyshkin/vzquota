@@ -26,17 +26,10 @@
 #define VZQUOTA_FILES_PATH VARDIR "/vzquota"
 #define VZQUOTA_FILE_NAME "quota"
 
-#ifndef L2
-#define MAGIC		0xFEDCBB00
-#define OLD_MAGIC_1	0xFEDCBA98
-
-#else
 #define MAGIC_V3	0xFEDCBC27	/* current quota v3 with ugid */
 #define MAGIC_V2	0xFEDCBB00	/* quota v2 */
 #define MAGIC_V1	0xFEDCBA98	/* quota v1 */
 #define MAGIC_CURRENT	MAGIC_V3
-#endif
-
 
 #define MAXFILENAMELEN 128	/* Maximal length of filename */
 
@@ -44,21 +37,17 @@
 
 #define QUOTA_ON	0x0001
 
-#ifdef L2
 #define QUOTA_DIRTY	0x0002
 #define QUOTA_UGID_ON	0x0004
 
 #define UGID_LOADED	0x0001
 #define UGID_DIRTY	0x0002
 #define UGID_ALL	0xFFFFFFFF
-#endif
 
 struct vz_quota_header {
 	int magic;
 	int flags;
 };
-
-#ifdef L2
 
 #define MAXQUOTAS 2
 #define USRQUOTA  0             /* element used for user quotas */
@@ -128,38 +117,19 @@ struct qf_data {
 	#define IO_BUF_SIZE	(300)
 #endif
 
-/* L2 */
-#endif
-
 int open_quota_file(unsigned int quota_id, const char *name, int flags);
 int unlink_quota_file(unsigned int quota_id, const char *name);
 int close_quota_file(int fd);
 
-#ifndef L2
-int write_quota_file(int fd, struct vz_quota_header *head,
-		     struct vz_quota_stat *qstat, char *path);
-int read_quota_file(int fd, struct vz_quota_header *head,
-		    void *qstat, char **path, int struct_size);
-#else
 int read_field(int fd, void *field, size_t size, off_t offset);
 int write_field(int fd, const void *field, size_t size, off_t offset);
 
 int read_quota_file(int fd, struct qf_data *q, int io_flags);
 int write_quota_file(int fd, struct qf_data *q, int io_flags);
-#endif
 
 int check_quota_file(int fd);
 
-
-#ifndef L2
-/* int dq_check_magic(struct vz_quota_header *head); */
-void dq_set_magic(struct vz_quota_header *head);
-#else
 int get_quota_version(struct vz_quota_header *head);
-#endif
-
-
-#ifdef L2
 
 char *type2name(int type);
 
@@ -213,7 +183,5 @@ int quota_syscall_setlimit(struct qf_data *qd, int no_stat, int no_ugid_stat);
 
 int vzquotactl_ugid_setlimit(struct qf_data * data, int id, int type, struct dq_stat * lim);
 int vzquotactl_ugid_setgrace(struct qf_data * data, int type, struct dq_info * lim);
-
-#endif
 
 #endif /* __VZQUOTA_H__ */

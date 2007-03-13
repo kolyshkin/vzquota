@@ -54,21 +54,7 @@ long vzquotactl_syscall(
 		error(EC_VZCALL, errno, "can't open vzctl device '%s'", VZCTL_DEVICE);
 
 	debug(LOG_DEBUG, "attempt new ioctl[%d]\n", VZCTL_QUOTA_CTL);
-#ifndef L2
-	rc = ioctl(fd, VZCTL_QUOTA_CTL, &qu);
-	if (rc < 0 && (errno == ENOTTY || errno == EINVAL))
-	{
-		/* attempt old quota syscall */
-		struct vz_quota_stat_old qstat_old = quota_new2old(_qstat);
-		debug(LOG_DEBUG, "attempt old ioctl [%d]\n", VZCTL_QUOTA_CTL_OLD);
-
-		qu.qstat = (struct vz_quota_stat *) &qstat_old;
-		rc = ioctl(fd, VZCTL_QUOTA_CTL_OLD, &qu);
-		*_qstat = quota_old2new(&qstat_old);
-	}
-#else
 	rc = ioctl(fd, VZCTL_QUOTA_NEW_CTL, &qu);
-#endif
 	debug(LOG_DEBUG, "vzquotactl ioctl end:cmd %d: id %d: status %d\n",
 		_cmd, _quota_id, rc);
 	
@@ -76,7 +62,6 @@ long vzquotactl_syscall(
 	return rc;
 }
 
-#ifdef L2
 long vzquotactl_ugid_syscall(
 		int _cmd,                /* subcommand */
 		unsigned int _quota_id,  /* quota id where it applies to */
@@ -112,7 +97,6 @@ long vzquotactl_ugid_syscall(
 	close(fd);	
 	return rc;
 }
-#endif
 
 #else
 

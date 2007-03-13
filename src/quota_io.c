@@ -29,8 +29,6 @@
 #define QF_OFF_PATH_LEN(size)	(QF_OFF_STAT + (size))
 #define QF_OFF_PATH(size)	(QF_OFF_PATH_LEN(size) + sizeof(size_t))
 
-#ifdef L2
-
 #define QF_OFF_UGID_INFO(path_len)	(QF_OFF_PATH(sizeof(struct vz_quota_stat)) + (path_len))
 #define QF_OFF_UGID_BUF(path_len)	(QF_OFF_UGID_INFO(path_len) + sizeof(struct ugid_info))
 
@@ -1017,8 +1015,6 @@ int vzquotactl_ugid_setlimit(struct qf_data *data, int id, int type, struct dq_s
 	return err;
 }
 
-#endif //L2
-
 static char* get_quota_file_name(unsigned int quota_id, char *buf, int bufsize)
 {
 	snprintf(buf, bufsize, "%s/%s.%u", VZQUOTA_FILES_PATH,
@@ -1027,20 +1023,7 @@ static char* get_quota_file_name(unsigned int quota_id, char *buf, int bufsize)
 	return buf;
 }
 
-#ifndef L2
-void dq_set_magic(struct vz_quota_header *head)
-{
-	head->magic = MAGIC;
-}
-#endif
 
-#ifndef L2
-static int dq_check_magic(struct vz_quota_header *head)
-{
-	return head->magic == MAGIC ? 0 :
-		(head->magic == OLD_MAGIC_1 ? 1 : -1);
-}
-#else
 int get_quota_version(struct vz_quota_header *head)
 {
 	switch(head->magic) {
@@ -1051,7 +1034,6 @@ int get_quota_version(struct vz_quota_header *head)
 	error(0, 0, "Can't detect quota file version; file is not a VZ quota file");
 	return -1;
 }
-#endif
 
 int unlink_quota_file(unsigned int quota_id, const char *name)
 {
@@ -1073,25 +1055,6 @@ int unlink_quota_file(unsigned int quota_id, const char *name)
 static int reformat_quota (int fd)
 {
 	int rc;
-#ifndef L2
-	char* path = NULL;
-        struct vz_quota_header head;
-	struct vz_quota_stat_old old_qstat;
-	struct vz_quota_stat qstat;
-	
-	rc = read_quota_file(fd, &head, &old_qstat, &path,
-			     sizeof(struct vz_quota_stat_old));
-	if (rc < 0)
-		return rc;
-
-	qstat = quota_old2new(&old_qstat);
-	dq_set_magic(&head);
-
-	rc = write_quota_file(fd, &head, &qstat, path);
-	if (rc < 0)
-		return rc;
-	if (path) free(path);
-#else
 	struct qf_data qd;
 	
 	init_quota_data(&qd);
@@ -1107,11 +1070,9 @@ static int reformat_quota (int fd)
 	
 	rc = write_quota_file(fd, &qd, IOF_ALL);
 	if (rc < 0) return rc;
-#endif
 	return 0;
 }
 
-#ifdef L2
 /* computes checksum of quota file, checksum being in the end of file */
 int chksum_quota_file(int fd, chksum_t *chksum)
 {
@@ -1146,32 +1107,10 @@ int chksum_quota_file(int fd, chksum_t *chksum)
 	free(buf);
 	return 0;
 }
-#endif
 
 int check_quota_file(int fd)
 {
 	int rc;
-#ifndef L2
-        struct vz_quota_header head;
-	
-	rc = read_quota_file(fd, &head, NULL, NULL, 0);
-	if (rc < 0)
-		return rc;
-		
-	rc = dq_check_magic(&head);
-	if (rc < 0)
-	{
-		error(0, 0, "File is not a VZ quota file");
-		return rc;
-	}
-	else if (rc > 0)
-	{
-		debug(LOG_WARNING, "Quota file for id %d is in old quota "
-				"format, converting\n", quota_id);
-		if (reformat_quota(fd) < 0)
-				return -1;
-	}
-#else
 	struct qf_data qd;
 		
 	init_quota_data(&qd);
@@ -1200,7 +1139,6 @@ int check_quota_file(int fd)
 		}
 	}
 	free_quota_data(&qd);
-#endif
 	return 0;
 }
 									
@@ -1237,11 +1175,7 @@ int close_quota_file(int fd)
 	return close(fd);
 }
 
-#ifndef L2
-int read_field(int fd, void *field, int size, int offset)
-#else
 int read_field(int fd, void *field, size_t size, off_t offset)
-#endif
 {
 	int err = pread(fd, field, size, offset);
 	if (err < 0) {
@@ -1256,47 +1190,6 @@ int read_field(int fd, void *field, size_t size, off_t offset)
 	return 0;
 }
 
-#ifndef L2
-int read_quota_file(int fd, struct vz_quota_header *head,
-		    void *qstat, char **path, int struct_size)
-{
-	off_t err;
-	struct_size = (struct_size) ?
-		struct_size : sizeof(struct vz_quota_stat);
-
-	if (head && (err = read_field(fd, head,
-		sizeof(struct vz_quota_header), QF_OFF_HEADER)) < 0)
-		return err;
-
-	if (qstat && (err = read_field(fd, qstat,
-		struct_size, QF_OFF_STAT)) < 0)
-		return err;
-
-	if (path)
-	{
-		char* buf = NULL;
-		size_t length;
-		
-		err = read_field(fd, &length, sizeof(size_t), QF_OFF_PATH_LEN(struct_size));
-		if (err < 0)
-			return err;
-
-		buf = (char *) xmalloc(length + 1);
-
-		err = read_field(fd, buf, length, QF_OFF_PATH(struct_size));
-		if (err < 0)
-		{
-			xfree(buf);
-			return err;
-		}
-
-		buf[length] = 0;
-		*path = buf;
-	}
-
-	return 0;
-}
-#else
 int read_quota_file(int fd, struct qf_data *q, int io_flags)
 {
 	off_t err;
@@ -1426,13 +1319,8 @@ int read_quota_file(int fd, struct qf_data *q, int io_flags)
 	debug(LOG_DEBUG, "Quota file was read\n");
 	return 0;
 }
-#endif
 
-#ifndef L2
-int write_field(int fd, void *field, int size, int offset)
-#else
 int write_field(int fd, const void *field, size_t size, off_t offset)
-#endif
 {
 	int err = pwrite(fd, field, size, offset);
 	if (err < 0 || (unsigned)err != size)
@@ -1443,38 +1331,6 @@ int write_field(int fd, const void *field, size_t size, off_t offset)
 	return 0;
 }
 
-#ifndef L2
-int write_quota_file(int fd, struct vz_quota_header *head,
-		    struct vz_quota_stat *qstat, char *path)
-{
-	off_t err;
-
-	if (head && (err = write_field(fd, head,
-		sizeof(struct vz_quota_header), QF_OFF_HEADER)) < 0)
-		return err;
-
-	if (qstat && (err = write_field(fd, qstat,
-		sizeof(struct vz_quota_stat), QF_OFF_STAT)) < 0)
-		return err;
-
-	if (path)
-	{
-		size_t length = strlen(path);
-		
-		err = write_field(fd, &length, sizeof(size_t),
-				  QF_OFF_PATH_LEN(sizeof(struct vz_quota_stat)));
-		if (err < 0)
-			return err;
-
-		err = write_field(fd, path, length,
-				  QF_OFF_PATH(sizeof(struct vz_quota_stat)));
-		if (err < 0)
-			return err;
-	}
-
-	return 0;
-}
-#else
 /* this function should be called with io_flags=IOF_ALL cause of checksum */
 int write_quota_file(int fd, struct qf_data *q, int io_flags)
 {
@@ -1601,5 +1457,3 @@ int write_quota_file(int fd, struct qf_data *q, int io_flags)
 	debug(LOG_DEBUG, "Quota file was written\n");
 	return 0;
 }
-#endif
-

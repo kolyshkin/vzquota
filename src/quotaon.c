@@ -28,13 +28,9 @@
 /* quota init */
 
 static char quotainit_usage[] =
-#ifndef L2
-"Usage: %s %s <quotaid> -p <mount_path> [-c <quota_file>] [-r 1|0] [-s 1|0]\n"
-#else
 "Usage: %s %s <quotaid> -p <mount_path> [-c <quota_file>]\n"
 "\t[-s,--sub-quotas 1|0]\n"
 "\t[-u,--ugid-limit <ugid_limit>]\n"
-#endif
 "\t-b,--block-softlimit <block_soft_limit>\n"
 "\t-B,--block-hardlimit <block_hard_limit>\n"
 "\t-i,--inode-softlimit <inode_soft_limit>\n"
@@ -42,17 +38,11 @@ static char quotainit_usage[] =
 "\t-e,--block-exptime <block_expiration_time>\n"
 "\t-n,--inode-exptime <inode_expiration_time>\n";
 
-#ifndef L2
-static char quotainit_short_options[] = "-p:c:r:s:" "b:B:i:I:e:n:";
-#else
 static char quotainit_short_options[] = "-p:c:r:s:u:" "b:B:i:I:e:n:";
-#endif
 static struct option quotainit_long_options[] = {
 	{"rsquash", required_argument, NULL, 'r'}, /* depricated */
 	{"sub-quotas", required_argument, NULL, 's'},
-#ifdef L2
 	{"ugid-limit", required_argument, NULL, 'u'},
-#endif
 	{"quota-file", required_argument, NULL, 'c'},
 
 	{"block-softlimit", required_argument, NULL, 'b'},
@@ -68,28 +58,18 @@ static struct option quotainit_long_options[] = {
 /* quota on */
 
 static char quotaon_usage[] =
-#ifndef L2
-"Usage: %s %s <quotaid> [-f] [-p <mount_path>] [-c <quota_file>] [-r 1|0] [-s 1|0]\n"
-#else
 "Usage: %s %s <quotaid> [-f] [-p <mount_path>] [-c <quota_file>]\n"
 "\t[-s,--sub-quotas 1|0]\n"
 "\t[-u,--ugid-limit <ugid_limit>]\n"
-#endif
 "\t[-b <block_soft_limit>] [-B <block_hard_limit>]\n"
 "\t[-i <inode_soft_limit>] [-I <inode_hard_limit>]\n"
 "\t[-e <block_expiration_time>] [-n <inode_expiration_time>]\n";
 
-#ifndef L2
-static char quotaon_short_options[] = "-p:c:r:s:f" "b:B:i:I:e:n:";
-#else
 static char quotaon_short_options[] = "-p:c:r:s:u:f" "b:B:i:I:e:n:";
-#endif
 static struct option quotaon_long_options[] = {
 	{"rsquash", required_argument, NULL, 'r'}, /* depricated */
 	{"sub-quotas", required_argument, NULL, 's'},
-#ifdef L2
 	{"ugid-limit", required_argument, NULL, 'u'},
-#endif
 	{"quota-file", required_argument, NULL, 'c'},
 	{"nocheck", no_argument, NULL, 13},
 
@@ -106,28 +86,18 @@ static struct option quotaon_long_options[] = {
 /* quota setlimit */
 
 static char quotaset_usage[] =
-#ifndef L2
-"Usage: %s %s <quotaid> [-c <quota_file>] [-r 1|0] [-s 1|0]\n"
-#else
 "Usage: %s %s <quotaid> [-c <quota_file>] [-f]\n"
 "\t[-s,--sub-quotas 1|0]\n"
 "\t[-u,--ugid-limit <ugid_limit>]\n"
-#endif
 "\t[-b <block_soft_limit>] [-B <block_hard_limit>]\n"
 "\t[-i <inode_soft_limit>] [-I <inode_hard_limit>]\n"
 "\t[-e <block_expiration_time>] [-n <inode_expiration_time>]\n";
 
-#ifndef L2
-static char quotaset_short_options[] = "-p:c:r:s:" "b:B:i:I:e:n:";
-#else
 static char quotaset_short_options[] = "-p:c:r:s:u:f" "b:B:i:I:e:n:";
-#endif
 static struct option quotaset_long_options[] = {
 	{"rsquash", required_argument, NULL, 'r'}, /* depricated */
 	{"sub-quotas", required_argument, NULL, 's'},
-#ifdef L2
 	{"ugid-limit", required_argument, NULL, 'u'},
-#endif
 	{"quota-file", required_argument, NULL, 'c'},
 
 	{"block-softlimit", required_argument, NULL, 'b'},
@@ -141,7 +111,6 @@ static struct option quotaset_long_options[] = {
 };
 
 /* quota ugidset */
-#ifdef L2
 
 static char quotaugidset_usage[] =
 "Usage: \n"
@@ -158,8 +127,6 @@ static struct option quotaugidset_long_options[] = {
 	{"gid", required_argument, NULL, 'g'},
 	{0, 0, 0, 0}
 };
-
-#endif
 
 /* quota off */
 
@@ -194,49 +161,6 @@ static struct option quotareloadugid_long_options[] = {
 	{0, 0, 0, 0}
 };
 
-#ifndef L2
-static void clear_quotas(struct vz_quota_stat *stat)
-{
-	memset(stat, 0, sizeof(struct vz_quota_stat));
-}
-#endif
-
-#ifndef L2
-static void set_quotas_from_line(struct vz_quota_stat *stat)
-{
-	ASSERT(stat);
-
-	/* user enter: 1k blocks, kernel receive: byte sizes*/
-	if (option & FL_BHL)
-		stat->bhardlimit = size_view(limits.bhardlimit);
-	if (option & FL_BSL)
-		stat->bsoftlimit = size_view(limits.bsoftlimit);
-
-	if (option & FL_BET)
-		stat->bexpire = limits.bexpire;
-
-	if (option & FL_IHL)
-		stat->ihardlimit = limits.ihardlimit;
-	if (option & FL_ISL)
-		stat->isoftlimit = limits.isoftlimit;
-	if (option & FL_IET)
-		stat->iexpire = limits.iexpire;
-
-	if (option & FL_RSQ) {
-		if (limits.options & VZ_QUOTA_OPT_RSQUASH)
-			stat->options |= VZ_QUOTA_OPT_RSQUASH;
-		else
-			stat->options &= (~VZ_QUOTA_OPT_RSQUASH);
-	}
-
-	if (option & FL_SQT) {
-		if (limits.options & VZ_QUOTA_OPT_SUBQUOTAS)
-			stat->options |= VZ_QUOTA_OPT_SUBQUOTAS;
-		else
-			stat->options &= (~VZ_QUOTA_OPT_SUBQUOTAS);
-	}
-}
-#else
 static void set_quotas_from_line(struct qf_data *qd)
 {
 	struct vz_quota_stat *stat;
@@ -285,36 +209,7 @@ static void set_quotas_from_line(struct qf_data *qd)
 		ugid_stat->info.config.limit = ug_config.limit;
 	}
 }
-#endif
 
-#ifndef L2
-static void check_limits(struct vz_quota_stat *newstat)
-{
-	ASSERT(newstat);
-
-	if (newstat->bhardlimit < newstat->bsoftlimit)
-		debug(LOG_WARNING, "block_hard_limit [%d] < block_soft_limit [%d]\n",
-		      block_view(newstat->bhardlimit), block_view(newstat->bsoftlimit));
-
-	if (newstat->ihardlimit < newstat->isoftlimit)
-		debug(LOG_WARNING, "inode_hard_limit [%d] < inode_soft_limit [%d]\n",
-		      newstat->ihardlimit, newstat->isoftlimit);
-
-	if (newstat->bhardlimit < newstat->bcurrent)
-		debug(LOG_WARNING, "block_hard_limit [%d] < block_current_usage [%d]\n",
-		      block_view(newstat->bhardlimit), block_view(newstat->bcurrent));
-	else if (newstat->bsoftlimit < newstat->bcurrent)
-		debug(LOG_WARNING, "block_soft_limit [%d] < block_current_usage [%d]\n",
-		      block_view(newstat->bsoftlimit), block_view(newstat->bcurrent));
-
-	if (newstat->ihardlimit < newstat->icurrent)
-		debug(LOG_WARNING, "inode_hard_limit [%d] < inode_current_usage [%d]\n",
-		      newstat->ihardlimit, newstat->icurrent);
-	else if (newstat->isoftlimit < newstat->icurrent)
-		debug(LOG_WARNING, "inode_soft_limit [%d] < inode_current_usage [%d]\n",
-		      newstat->isoftlimit, newstat->icurrent);
-}
-#else
 static void check_limits(struct qf_data *qd, int what_given)
 {
 	struct vz_quota_stat *qstat;
@@ -363,23 +258,7 @@ static void check_limits(struct qf_data *qd, int what_given)
 	
 	//TODO check limits for ugids -> warnings
 }
-#endif
 
-
-#ifndef L2
-static void correct_grace(struct vz_quota_stat *newstat)
-{
-	if (newstat->bcurrent <= newstat->bsoftlimit)
-		newstat->btime = 0;
-	else if (newstat->btime == 0)
-		newstat->btime = time(NULL) + newstat->bexpire;
-
-	if (newstat->icurrent <= newstat->isoftlimit)
-		newstat->itime = 0;
-	else if (newstat->itime == 0)
-		newstat->itime = time(NULL) + newstat->iexpire;
-}
-#else
 static void correct_grace(struct vz_quota_stat *stat, struct ugid_quota *ugid_stat)
 {
 	struct dquot *dq;
@@ -429,17 +308,7 @@ static void correct_grace(struct vz_quota_stat *stat, struct ugid_quota *ugid_st
 		}
 	}
 }
-#endif
 
-#ifndef L2
-static void calc_current_usage(const char* path, struct vz_quota_stat* qstat)
-{
-	struct scan_info info;
-	scan(&info, path);
-	qstat->bcurrent = info.size;
-	qstat->icurrent = info.inodes;
-}
-#else
 static void calc_current_usage(struct qf_data *qd)
 {
 	struct scan_info info;
@@ -456,7 +325,6 @@ static void calc_current_usage(struct qf_data *qd)
 
 	qd->head.flags &= ~QUOTA_DIRTY;
 }
-#endif
 
 struct quota_file_t {
 	unsigned int id;
@@ -472,22 +340,13 @@ static void quota_init()
 {
 	int fd;
 	int rc;
-#ifndef L2
-	struct vz_quota_stat quota_stat;
-	struct vz_quota_header head;
-#else
 	struct qf_data qd;
 
 	init_quota_data(&qd);
-#endif	
 	
 	ASSERT(mount_point);
 	
-#ifdef L2
 	rc = quota_syscall_stat(&qd, 1);
-#else
-	rc = vzquotactl_syscall(VE_QUOTA_GETSTAT, quota_id, &quota_stat, NULL);
-#endif
 	if (rc == 0)
 		error(EC_RUN, 0, "Quota is running, stop it first");
 
@@ -509,18 +368,6 @@ static void quota_init()
 		qf->path = config_file;
 		register_cleaner(quota_file_cleaner, qf);
 	}
-#ifndef L2
-	clear_quotas(&quota_stat);
-	set_quotas_from_line(&quota_stat);
-	calc_current_usage(mount_point, &quota_stat);
-	check_limits(&quota_stat);
-
-	head.flags = 0;
-	dq_set_magic(&head);
-
-	if (write_quota_file(fd, &head, &quota_stat, mount_point) < 0)
-		exit_cleanup(EC_QUOTAFILE);
-#else
 	memset(&qd.stat, 0, sizeof(struct vz_quota_stat));
 	free_ugid_quota(&qd.ugid_stat);
 	clean_ugid_info(&qd.ugid_stat);
@@ -540,7 +387,6 @@ static void quota_init()
 	print_ugid_status(&qd);
 #endif
 	free_quota_data(&qd);
-#endif
 	close_quota_file(fd);
 	debug(LOG_INFO, "quota initialization for id %d complete\n", quota_id);
 }
@@ -548,15 +394,6 @@ static void quota_init()
 static void quota_on()
 {
 	int fd;
-#ifndef L2
-	struct vz_quota_stat temp_stat;
-	struct vz_quota_stat quota_stat;
-	struct vz_quota_header head;
-	char *mpath = NULL;
-	int retry = 0;
-	int sleeptime = 1;
-	int already_check = 0;
-#else
 	struct qf_data qd;
 	struct vz_quota_ugid_stat old_conf;
 	int rescan = 0;
@@ -564,21 +401,8 @@ static void quota_on()
 	struct qf_data *qd_temp;
 
 	init_quota_data(&qd);
-#endif
 
 	fd = open_quota_file(quota_id, config_file, O_RDWR);
-#ifndef L2
-	if (fd < 0
-	    || check_quota_file(fd) < 0
-	    || read_quota_file(fd, &head, &quota_stat, &mpath, 0) < 0)
-		exit(EC_QUOTAFILE);
-
-	if (option & FL_PATH
-	    && strcmp(mpath, mount_point)) {
-		mpath = mount_point;
-		option |= FL_FORCE;
-	}
-#else
 	if (fd < 0 && errno == ENOENT)
 		exit(EC_NOQUOTAFILE);
 	/* we must read and write whole files cause of checksum */
@@ -611,31 +435,7 @@ static void quota_on()
 		//qd.ugid_stat.info.config.flags = fl & ~VZDQUG_ON;
 		qd.ugid_stat.info.config.limit = ul;
 	}
-#endif
 
-#ifndef L2
-	if (head.flags & QUOTA_ON)
-	{
-		if (vzquotactl_syscall(VE_QUOTA_GETSTAT, quota_id, &temp_stat, NULL) < 0)
-		{
-			if (errno == ENOENT)
-			{
-				if (!(option & FL_NOCHECK))
-				{
-					/* quota not running */
-					debug(LOG_WARNING, "Incorrect quota shutdown for id %d, "
-						"recalculating disk usage\n", quota_id);
-					calc_current_usage(mpath, &quota_stat);
-				}
-				already_check = 1;
-			}
-			else
-			    error(EC_VZCALL, errno, "quota getstat for id %d", quota_id);
-		}
-		else
-			goto out_run;
-	}
-#else
 	qd_temp = (struct qf_data*) xmalloc(sizeof(struct qf_data));
 	rc = quota_syscall_stat(qd_temp, 1);
 	free(qd_temp);
@@ -648,35 +448,19 @@ static void quota_on()
 			"recalculating disk usage\n", quota_id);
 		rescan = 1;
 	}
-#endif
 	
-#ifdef L2
 	if ((qd.head.flags & QUOTA_DIRTY) && !rescan && !(option & FL_NOCHECK))
 	{
 		debug(LOG_INFO, "quota usage is invalid for id %d, recalculating disk usage...\n", quota_id);
 		rescan = 1;
 	}
-#endif
 
-#ifndef L2
-	if (option & FL_FORCE && !already_check)
-	{
-		debug(LOG_INFO, "force checking for id %d quota...\n", quota_id);
-		calc_current_usage(mpath, &quota_stat);
-	}
-#else
 	if (option & FL_FORCE && !rescan)
 	{
 		debug(LOG_INFO, "Force quota checking for id %d...\n", quota_id);
 		rescan = 1;
 	}
-#endif
 
-#ifndef L2
-	set_quotas_from_line(&quota_stat);
-	check_limits(&quota_stat);
-	correct_grace(&quota_stat);
-#else
 	/* scan quota after applying cmd-line parameters; they would switch
 	 * ugid quota on/off, that acts on calc_current_usage() */
 	if (rescan)
@@ -685,35 +469,11 @@ static void quota_on()
 	check_limits(&qd, 0);
 	correct_grace(&qd.stat, &qd.ugid_stat);
 	reset_ugid_flags(&qd.ugid_stat, UGID_ALL); /* clear all ugid flags*/
-#endif
 
-#ifndef L2
-	while (retry < MAX_RETRY)
-	{
-		if (vzquotactl_syscall(VE_QUOTA_ON, quota_id, &quota_stat, mpath) < 0)
-		{
-			if (errno == EEXIST)
-				goto out_run;
-			retry++;
-			if (errno != EBUSY || retry == MAX_RETRY)
-				error(EC_VZCALL, errno, "quota on for %d", quota_id);
-			usleep(sleeptime * 1000);
-			sleeptime = sleeptime * 2;
-		}
-		else
-			break;
-	}
-#else
 	if (quota_syscall_on(&qd) < 0)
 		/* quota is on */
 		goto out_run;
-#endif
 
-#ifndef L2
-	head.flags |= QUOTA_ON;
-	if (write_quota_file(fd, &head, &quota_stat, mpath) < 0)
-		exit(EC_QUOTAFILE);
-#else
 	qd.head.flags |= QUOTA_ON;
 
 	if (is_ugid_dirty(&qd.ugid_stat))
@@ -729,7 +489,6 @@ static void quota_on()
 	print_ugid_status(&qd);
 #endif
 	free_quota_data(&qd);
-#endif
 	
 	close_quota_file(fd);
 	debug(LOG_INFO, "Quota was switched on for id %d\n", quota_id);
@@ -744,33 +503,12 @@ static void quota_off()
 {
 	int fd;
 	int rc;
-#ifndef L2
-#define force_exit(ex)			\
-	({				\
-		if (option & FL_FORCE)	\
-			goto force_off;	\
-		else			\
-			exit(ex);	\
-	})
-	struct vz_quota_stat quota_stat;
-	struct vz_quota_header head;
-	int retry = 0;
-	int sleeptime = 1;
-	int err;
-#else
 	struct qf_data qd;
 	int force = 0;
 
 	init_quota_data(&qd);
-#endif
 
 	fd = open_quota_file(quota_id, config_file, O_RDWR);
-#ifndef L2
-	if (fd < 0
-	    || check_quota_file(fd) < 0
-	    || read_quota_file(fd, &head, NULL, NULL, 0) < 0)
-		force_exit(EC_QUOTAFILE);
-#else
 	/* we must read and write whole files cause of checksum */
 	if (fd < 0
 	    || check_quota_file(fd) < 0
@@ -787,36 +525,7 @@ static void quota_off()
 				exit(EC_QUOTAFILE);
 		}
 	}
-#endif
 
-#ifndef L2
-quotaoff_retry:
-	rc = vzquotactl_syscall(VE_QUOTA_OFF, quota_id, &quota_stat, NULL);
-	err = errno;
-
-	if (errno == EBUSY && retry < MAX_RETRY) {
-		retry++;
-    		usleep(sleeptime * 1000);
-		sleeptime = sleeptime * 2;
-		goto quotaoff_retry;
-	}
-	if (rc < 0 && errno != ENOENT)
-		error(EC_VZCALL, errno, "Quota off for id %d", quota_id);
-
-	if ((head.flags & QUOTA_ON) ? rc < 0 : rc == 0)
-		debug(LOG_WARNING, "Quota file inconsistency for id %d, repair\n", quota_id);
-
-	head.flags &= (~QUOTA_ON);
-
-	/* write quota stats only if quota was running */
-	if (write_quota_file(fd, &head, (rc < 0) ? NULL : &quota_stat, NULL) < 0)
-		exit(EC_QUOTAFILE);
-
-	close_quota_file(fd);
-
-	if (rc < 0) /* quota is off */
-		error(EC_NOTRUN, 0, "Quota is not running for id %d", quota_id);
-#else
 	rc = quota_syscall_off(&qd);
 
 	if (rc < 0) {
@@ -870,54 +579,16 @@ quotaoff_retry:
 #endif
 	
 	free_quota_data(&qd);
-#endif
 	debug(LOG_INFO, "Quota was switched off for id %d\n", quota_id);
 	return;
-
-#ifndef L2
-  force_off:
-	debug(LOG_WARNING, "Force switching quota off for id %d "
-		"(quota file may be inconsistent)\n", quota_id);
-	if (vzquotactl_syscall(VE_QUOTA_OFF, quota_id, &quota_stat, NULL) < 0)
-	{
-		if (errno == ENOENT)
-			error(EC_NOTRUN, 0, "Quota is not running for %d", quota_id);
-		else
-			error(EC_VZCALL, errno, "Quota off for %d", quota_id);
-	}
-	return;
-#undef force_exit
-#endif //L2
 }
 
 static void quota_drop()
 {
-#ifndef L2
-#define force_exit(ex)			\
-	({				\
-		if (option & FL_FORCE)	\
-			goto force_off;	\
-		else			\
-			exit(ex);	\
-	})
-	struct vz_quota_stat temp_stat;
-#else
 	struct qf_data qd_temp;
-#endif
 	int fd;
 
 	fd = open_quota_file(quota_id, config_file, O_RDWR);
-#ifndef L2
-	if (fd < 0)
-		exit(EC_QUOTAFILE);
-	if (check_quota_file(fd) < 0)
-		exit(EC_QUOTAFILE);
-	
-	if (vzquotactl_syscall(VE_QUOTA_GETSTAT, quota_id, &temp_stat, NULL) >= 0) {
-		debug(LOG_WARNING, "Quota is running for id %d\n", quota_id);
-		force_exit(EC_RUN);
-	}
-#else
 	if (fd < 0) {
 		if (errno == ENOENT)
 			exit(EC_NOQUOTAFILE);
@@ -933,7 +604,6 @@ static void quota_drop()
 		else
 			exit(EC_RUN);
 	}
-#endif
 	if (unlink_quota_file(quota_id, config_file) < 0)
 		exit(EC_QUOTAFILE);
 
@@ -941,18 +611,8 @@ static void quota_drop()
 
 	debug(LOG_INFO, "Quota file was deleted for id %d\n", quota_id);
 	return;
-#ifndef L2
-  force_off:
-	if (unlink_quota_file(quota_id, config_file) < 0)
-		exit(EC_QUOTAFILE);
-	debug(LOG_WARNING, "Quota file was forcely deleted for id %d "
-		"(quota may be still running)\n", quota_id);
-	return;
-#undef force_exit
-#endif //L2
 }
 
-#ifdef L2
 static void quota_reload_ugid()
 {
 	struct qf_data qd;
@@ -1031,50 +691,27 @@ static void quota_reload_ugid()
 
 	return;
 }
-#endif
 
 static void quota_set()
 {
 	int fd;
-#ifndef L2
-	int flag = 0;
-	struct vz_quota_stat quota_stat;
-#else
 	struct qf_data qd;
 	struct qf_data *qd_temp;
 	int rc;
 
 	init_quota_data(&qd);
-#endif
 
 	fd = open_quota_file(quota_id, config_file, O_RDWR);
-#ifndef L2
-	if (fd < 0)
-		exit(EC_QUOTAFILE);
-#else
 	if (fd < 0) {
 		if (errno == ENOENT)
 			exit(EC_NOQUOTAFILE);
 		else
 			exit(EC_QUOTAFILE);
 	}
-#endif
 
 	if (check_quota_file(fd) < 0)
 		exit(EC_QUOTAFILE);
 
-#ifndef L2
-	if (vzquotactl_syscall(VE_QUOTA_GETSTAT, quota_id, &quota_stat, NULL) < 0) {
-		if (errno == ENOENT) {
-			debug(LOG_WARNING, "quota not running for %d, "
-				"set new limit to file\n", quota_id);
-			if (read_quota_file(fd, NULL, &quota_stat, NULL, 0) < 0)
-				exit(EC_QUOTAFILE);
-			flag = 1;
-		} else
-			error(EC_VZCALL, errno, "quota getstat for id %d", quota_id);
-	}
-#else
 	/* we must read and write whole files cause of checksum */
 	if (read_quota_file(fd, &qd, IOF_ALL) < 0)
 		exit(EC_QUOTAFILE);
@@ -1088,20 +725,7 @@ static void quota_set()
 			"saving new limits to file only\n", quota_id);
 		*/
 	}
-#endif
 	
-#ifndef L2	
-	set_quotas_from_line(&quota_stat);
-	check_limits(&quota_stat);
-	correct_grace(&quota_stat);
-
-	if (!flag && vzquotactl_syscall(VE_QUOTA_SETLIMIT, quota_id, &quota_stat, NULL) < 0)
-		error(EC_VZCALL, errno, "quota setlimit for id %d", quota_id);
-
-	if (write_quota_file(fd, NULL, &quota_stat,
-			     (option & FL_PATH) ? mount_point : NULL) < 0)
-		exit(EC_QUOTAFILE);
-#else
 	set_quotas_from_line(&qd);
 	check_limits(&qd, 1);
 	correct_grace(&qd.stat, NULL);
@@ -1136,13 +760,11 @@ static void quota_set()
 	print_ugid_status(&qd);
 #endif
 	free_quota_data(&qd);
-#endif
 
 	close_quota_file(fd);
 	debug(LOG_INFO, "Quota limits were set for id %d\n", quota_id);
 }
 
-#ifdef L2
 static void quota_setugid(int ugid, struct dq_stat * lim, struct dq_info * info)
 {
 	int fd;
@@ -1232,7 +854,6 @@ static void quota_setugid(int ugid, struct dq_stat * lim, struct dq_info * info)
 	close_quota_file(fd);
 	free_quota_data(&data);
 }
-#endif
 
 int quotainit_proc(int argc, char **argv)
 {
@@ -1280,13 +901,8 @@ int quotaset_proc(int argc, char **argv)
 		      quotaset_long_options, quotaset_usage, 0);
 
 	if (!(option & FL_VEID)
-#ifndef L2
-	    || (!(option & FL_PATH) &&
-		!(option & FL_LIMITS) && !(option & FL_RSQ) && !(option & FL_SQT))
-#else
 	    || (!(option & FL_PATH) && !(option & FL_LIMITS) &&
 		    !(option & FL_UGIDS) && !(option & FL_FORCE))
-#endif
 	    )
 		usage(quotaset_usage);
 
@@ -1294,7 +910,6 @@ int quotaset_proc(int argc, char **argv)
 	return 0;
 }
 
-#ifdef L2
 int quotaugidset_proc(int argc, char **argv)
 {
 	int rc;
@@ -1339,7 +954,6 @@ int quotaugidset_proc(int argc, char **argv)
 
 	return 0;
 }
-#endif
 
 int quotadrop_proc(int argc, char **argv)
 {
@@ -1353,7 +967,6 @@ int quotadrop_proc(int argc, char **argv)
 	return 0;
 }
 
-#ifdef L2
 int quotareloadugid_proc(int argc, char **argv)
 {
 	parse_options(argc, argv, quotareloadugid_short_options,
@@ -1365,4 +978,3 @@ int quotareloadugid_proc(int argc, char **argv)
 	quota_reload_ugid();
 	return 0;
 }
-#endif

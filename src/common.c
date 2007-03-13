@@ -34,11 +34,9 @@ char *mount_point = NULL;
 char *config_file = NULL;
 
 struct vz_quota_stat limits;
-#ifdef L2
 //struct vz_quota_stat ugid_limits;
 struct vz_quota_ugid_stat ug_config;
 //int ugid;
-#endif
 
 int debug_level = 0;
 int batch_mode = 0;
@@ -138,7 +136,6 @@ void *xmalloc(size_t size)
 	return (ptr);
 }
 
-#ifdef L2
 void *xrealloc(void *p, size_t size)
 {
 	void *ptr;
@@ -147,7 +144,6 @@ void *xrealloc(void *p, size_t size)
 		error(EC_SYSTEM, errno, "not enough memory for %d bytes", size);
 	return (ptr);
 }
-#endif
 
 char *xstrdup(const char* s)
 {
@@ -425,9 +421,7 @@ int parse_options(int argc, char **argv, char *short_options,
 
 	option = 0;
 	memset(&limits, 0, sizeof(limits));
-#ifdef L2
 	memset(&ug_config, 0, sizeof(ug_config));
-#endif
 
 	if (argc < 2)
 		/* cmd <veid> */
@@ -452,32 +446,6 @@ int parse_options(int argc, char **argv, char *short_options,
 			option |= FL_NOCHECK;
 			 break;
 
-#ifndef L2
-		case 'r':
-			if (!strcmp(optarg, "1")) {
-				option |= FL_RSQ;
-				limits.options |= VZ_QUOTA_OPT_RSQUASH;
-			} else if (!strcmp(optarg, "0")) {
-				option |= FL_RSQ;
-				limits.options &= (~VZ_QUOTA_OPT_RSQUASH);
-			} else {
-				usage(opt_usage);
-			}
-			break;
-
-		case 's':
-			if (!strcmp(optarg, "1")) {
-				option |= FL_SQT;
-				limits.options |= VZ_QUOTA_OPT_SUBQUOTAS;
-			} else if (!strcmp(optarg, "0")) {
-				option |= FL_SQT;
-				limits.options &=
-					(~VZ_QUOTA_OPT_SUBQUOTAS);
-			} else {
-				usage(opt_usage);
-			}
-			break;
-#else
 		case 'r':
 			break;
 
@@ -525,7 +493,6 @@ int parse_options(int argc, char **argv, char *short_options,
 		case 'T':
 			option |= FL_DUMP_EXPTIME;
 			break;
-#endif
 		case 'c':
 			option |= FL_CONF_FILE;
 			config_file = optarg;
@@ -541,61 +508,37 @@ int parse_options(int argc, char **argv, char *short_options,
 			break;
 
 		case 'b':
-#ifndef L2
-			if (str2u64(optarg, &limits.bsoftlimit) < 0)
-#else
 			if (str2u64(optarg, &limits.dq_stat.bsoftlimit) < 0)
-#endif
 				usage(opt_usage);
 			option |= FL_BSL;
 			break;
 
 		case 'B':
-#ifndef L2
-			if (str2u64(optarg, &limits.bhardlimit) < 0)
-#else
 			if (str2u64(optarg, &limits.dq_stat.bhardlimit) < 0)
-#endif
 				usage(opt_usage);
 			option |= FL_BHL;
 			break;
 
 		case 'e':
-#ifndef L2
-			if (str2time(optarg, &limits.bexpire) < 0)
-#else
 			if (str2time(optarg, &limits.dq_info.bexpire) < 0)
-#endif
 				usage(time_usage);
 			option |= FL_BET;
 			break;
 
 		case 'i':
-#ifndef L2
-			if (str2u32(optarg, &limits.isoftlimit) < 0)
-#else
 			if (str2u32(optarg, &(limits.dq_stat.isoftlimit)) < 0)
-#endif
 				usage(opt_usage);
 			option |= FL_ISL;
 			break;
 
 		case 'I':
-#ifndef L2
-			if (str2u32(optarg, &limits.ihardlimit) < 0)
-#else
 			if (str2u32(optarg, &(limits.dq_stat.ihardlimit)) < 0)
-#endif
 				usage(opt_usage);
 			option |= FL_IHL;
 			break;
 
 		case 'n':
-#ifndef L2
-			if (str2time(optarg, &limits.iexpire) < 0)
-#else
 			if (str2time(optarg, &limits.dq_info.iexpire) < 0)
-#endif
 				usage(time_usage);
 			option |= FL_IET;
 			break;

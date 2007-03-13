@@ -56,11 +56,7 @@ static loff_t get_inode_size(const char* fname, struct stat *st)
 	/* There's no way to do ioctl() on links... */
 	if (S_ISLNK(st->st_mode)
 	    || !(S_ISDIR(st->st_mode) || S_ISREG(st->st_mode)))
-#ifndef L2
-		return st->st_blocks << 9;
-#else
 		return ((loff_t) st->st_blocks) << STAT_BLOCK_BITS;
-#endif
 
 	fd = open(fname, O_RDONLY);
 	if (fd < 0)
@@ -68,11 +64,7 @@ static loff_t get_inode_size(const char* fname, struct stat *st)
 
 	if (ioctl(fd, FIOQSIZE, &size) < 0)
 	{
-#ifndef L2
-		size = st->st_blocks << 9;
-#else
 		size = ((loff_t) st->st_blocks) << STAT_BLOCK_BITS;
-#endif
 		if (!ioctl_fail_warn)
 		{
 			ioctl_fail_warn = 1;
@@ -111,10 +103,8 @@ static int check_hard_link(struct scan_info *info, ino_t inode_num)
 static void add_quota_item(struct scan_info *info, const char * item_name, int resolve_sym, dev_t root_dev)
 {
 	struct stat st;
-#ifdef L2
 	qint qspace;
 	loff_t space;
-#endif
 
 	ASSERT(info && item_name);
 
@@ -131,10 +121,6 @@ static void add_quota_item(struct scan_info *info, const char * item_name, int r
 		if (check_hard_link(info, st.st_ino))
 			return;
 
-#ifndef L2
-	info->size += get_inode_size(item_name, &st);
-	info->inodes++;
-#else
 	space = get_inode_size(item_name, &st);
 /*	debug(LOG_DEBUG, "get size for %s: %llu\n", item_name, space);*/
 
@@ -145,7 +131,6 @@ static void add_quota_item(struct scan_info *info, const char * item_name, int r
 		add_ugid_usage(info->ugid_stat, USRQUOTA, st.st_uid, qspace);
 		add_ugid_usage(info->ugid_stat, GRPQUOTA, st.st_gid, qspace);
 	}
-#endif
 
 	if (S_ISDIR(st.st_mode)) {
 		// Add new directory entry
@@ -187,9 +172,7 @@ void scan(struct scan_info *info, const char *mnt)
 {
 	char *pwd_path = NULL;
 	struct stat root_st;
-#ifdef L2
 	struct ugid_quota *ugid_stat = info->ugid_stat;
-#endif
 
 	ASSERT(info && mnt);
 
@@ -199,12 +182,10 @@ void scan(struct scan_info *info, const char *mnt)
 		error(EC_SYSTEM,errno,"quota check : getcwd");
 
 	memset(info, 0, sizeof(struct scan_info));
-#ifdef L2
 	if (ugid_stat) {
 		info->ugid_stat = ugid_stat;
 		reset_ugid_usage(info->ugid_stat);
 	}
-#endif
 	if (stat(mnt, &root_st) == -1)
 		error(EC_SYSTEM, errno, "quota check : stat %s", mnt);
 
@@ -226,7 +207,6 @@ void scan(struct scan_info *info, const char *mnt)
 
 		info->dir_stack = next_dir;
 	}
-#ifdef L2
 	if (info->ugid_stat) {
 		/* drop dummy ugid entries */
 		drop_dummy_ugid(info->ugid_stat);
@@ -234,7 +214,6 @@ void scan(struct scan_info *info, const char *mnt)
 		/* update size of buffer */
 		info->ugid_stat->info.buf_size = info->ugid_stat->dquot_size;
 	}
-#endif
 	if (chdir(pwd_path) < 0)
 		error(EC_SYSTEM,errno,"quota check : chdir '%s'", pwd_path);
 

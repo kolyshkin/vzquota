@@ -44,18 +44,12 @@ int main(int argc, char **argv)
 	parse_global_options(&argc, &argv, usg);
 	
 	mount_point = globolize_path(argv[0]);
-#ifdef L2
 	info.ugid_stat = NULL;
-#endif	
 	scan(&info, mount_point);
 
 	printf("quota usage for %s\n", mount_point);
 	printf("%11s%11s\n","blocks", "inodes");
-#ifndef L2
-	printf("%11u%11u\n", block_view(info.size), info.inodes);
-#else
 	printf("%11u%11u\n", ker2block(info.size), info.inodes);
-#endif
 	exit(0);
 }
 
