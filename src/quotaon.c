@@ -90,7 +90,7 @@ static struct option quotaon_long_options[] = {
 /* quota setlimit */
 
 static char quotaset_usage[] =
-"Usage: %s %s <quotaid> [-c <quota_file>] [-f]\n"
+"Usage: %s %s <quotaid> [-p <mount_path>] [-c <quota_file>] [-f]\n"
 "\t[-R,--relative]\n"
 "\t[-s,--sub-quotas 1|0]\n"
 "\t[-u,--ugid-limit <ugid_limit>]\n"
@@ -120,14 +120,14 @@ static struct option quotaset_long_options[] = {
 
 static char quotaugidset_usage[] =
 "Usage: \n"
-"\t%s %s <quotaid> [-c <quota_file>]" " [-u|-g] <ugid>\n"
+"\t%s %s <quotaid> [-p <mount_path>] [-c <quota_file>]" " [-u|-g] <ugid>\n"
 "\t\t[-R,--relative]\n"
 "\t\t<block_soft_limit> <block_hard_limit> <inode_soft_limit> <inode_hard_limit>\n"
-"\t%1$s %2$s <quotaid> [-c <quota_file>] -t\n"
+"\t%1$s %2$s <quotaid> [-p <mount_path>] [-c <quota_file>] -t\n"
 "\t\t[-R,--relative]\n"
 "\t\t<block-grace> <inode-grace>\n";
 
-static char quotaugidset_short_options[] = "c:ugtR";
+static char quotaugidset_short_options[] = "-p:c:ugtR";
 
 static struct option quotaugidset_long_options[] = {
 	{"quota-file", required_argument, NULL, 'c'},
@@ -140,9 +140,10 @@ static struct option quotaugidset_long_options[] = {
 /* quota off */
 
 static char quotaoff_usage[] =
-"Usage: %s %s <quotaid> [-f] [-c <quota_file>] [-R,--relative]\n";
+"Usage: %s %s <quotaid> [-p <mount_path>] "
+"[-f] [-c <quota_file>] [-R,--relative]\n";
 
-static char quotaoff_short_options[] = "-fc:R";
+static char quotaoff_short_options[] = "-p:fc:R";
 static struct option quotaoff_long_options[] = {
 	{"quota-file", required_argument, NULL, 'c'},
 	{"relative", no_argument, NULL, 'R'},
@@ -152,9 +153,10 @@ static struct option quotaoff_long_options[] = {
 /* quota drop */
 
 static char quotadrop_usage[] =
-"Usage: %s %s <quotaid> [-f] [-c <quota_file>] [-R,--relative]\n";
+"Usage: %s %s <quotaid> [-p <mount_path>] "
+"[-f] [-c <quota_file>] [-R,--relative]\n";
 
-static char quotadrop_short_options[] = "-fc:R";
+static char quotadrop_short_options[] = "-p:fc:R";
 static struct option quotadrop_long_options[] = {
 	{"quota-file", required_argument, NULL, 'c'},
 	{"relative", no_argument, NULL, 'R'},
@@ -164,9 +166,10 @@ static struct option quotadrop_long_options[] = {
 /* quota reload */
 
 static char quotareloadugid_usage[] =
-"Usage: %s %s <quotaid> [-c <quota_file>] [-R,--relative]\n";
+"Usage: %s %s <quotaid> [-p <mount_path>] [-c <quota_file>] "
+"[-R,--relative]\n";
 
-static char quotareloadugid_short_options[] = "-c:R";
+static char quotareloadugid_short_options[] = "-p:c:R";
 static struct option quotareloadugid_long_options[] = {
 	{"quota-file", required_argument, NULL, 'c'},
 	{"relative", no_argument, NULL, 'R'},
