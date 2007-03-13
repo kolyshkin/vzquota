@@ -27,24 +27,26 @@
 /* quota stat, quota show */
 
 static char vestat_usage[] =
-"Usage: %s %s quotaid [-f] [-c file] [-t]\n"
+"Usage: %s %s quotaid [-f] [-c file] [-R,--relative] [-t]\n"
 "\t(Specify the --help global option for a list of other help options)\n";
 
 static char quotashow_usage[] =
-"Usage: %s %s quotaid [-c file] [-t]\n"
+"Usage: %s %s quotaid [-c file] [-R,--relative] [-t]\n"
 "\t(Specify the --help global option for a list of other help options)\n";
 
-static char vestat_short_options[] = "-c:tf";
+static char vestat_short_options[] = "-c:tfR";
 static struct option vestat_long_options[] = {
 	{"quota-file", required_argument, NULL, 'c'},
 	{"user-group", no_argument, NULL, 't'},
+	{"relative",   no_argument, NULL, 'R'},
 	{0, 0, 0, 0}
 };
 	
-static char quotashow_short_options[] = "-c:t";
+static char quotashow_short_options[] = "-c:tR";
 static struct option quotashow_long_options[] = {
 	{"quota-file", required_argument, NULL, 'c'},
 	{"user-group", no_argument, NULL, 't'},
+	{"relative",   no_argument, NULL, 'R'},
 	{0, 0, 0, 0}
 };
 

@@ -543,6 +543,10 @@ int parse_options(int argc, char **argv, char *short_options,
 			option |= FL_IET;
 			break;
 
+		case 'R':
+			option |= FL_RELATIVE;
+			break;
+
 		case '?':
 		default:
 			usage(opt_usage);

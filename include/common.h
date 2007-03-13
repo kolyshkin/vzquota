@@ -57,6 +57,8 @@
 #define FL_L2_GRACE	0x0400000	/* set graces limits */
 
 #define FL_NOCHECK    	0x1000000
+/* VZ4 scheme: quota config file path is relative to quota accounting point */
+#define FL_RELATIVE   	0x2000000
 
 #define FL_L2_UGID	(FL_L2_USER | FL_L2_GROUP) 
 
