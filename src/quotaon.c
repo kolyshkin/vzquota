@@ -380,9 +380,15 @@ static void quota_init()
 		if (errno == EEXIST)
 		{
 			debug(LOG_WARNING, "Quota file exists, it will be overwritten\n");
-			if (unlink_quota_file(quota_id, actual_config_file) < 0)
-				exit(EC_QUOTAFILE);
-			fd = open_quota_file(quota_id, config_file, O_RDWR|O_CREAT);
+			/*
+			 * Don't remove file here, just try to reopen it without
+			 * O_EXCL. If we remove it now, then in case of error
+			 * later we'll:
+			 * - lost all data for this quota.id;
+			 * - get empty (== corrupted) quota file.
+			 */
+			fd = open_quota_file(quota_id, config_file,
+								O_RDWR|O_CREAT);
 		}
 		if (fd < 0)
 			exit(EC_QUOTAFILE);
