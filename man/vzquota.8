@@ -51,6 +51,13 @@ as command-line options. Limits are also stored in quota file, so
 subsequent \fBvzquota on\fP doesn't requires any quota limit as
 command-line parameter, although accepts them as well. New specified
 limits and flags will also be stored in the quota file.
+
+You can also create your own quota files for arbitrary quota accounting points.
+Quota file location and path to quota accounting point can be specified via
+\fB-c\fP and \fB-p\fP options (see below). You can use also \fB-R\fP option 
+instead of \fB-c\fP option, to set relative quota file location. In this case
+quota file resides one dirrectory upper than quota accounting point and has
+special name (see below).
 .TP
 \fBdrop\fP
 Remove quota file. Command checks if quota is running and refuses to remove
@@ -162,13 +169,25 @@ Disk quota expiration time for excess of a inode soft limit.
 .br
 .TP
 \fB\-p\fP \fIpath\fP
-Point of quota accounting for given \fIquota_id\fP. Required for \fBinit\fP and \fBon\fP
-commands. All other commands do not accept this option.
+Point of quota accounting for given \fIquota_id\fP. This option required for
+\fBinit\fP command and can be used also with any another command to override
+quota path obtained from quota file. For \fBon\fP and \fBsetlimit\fP commands,
+this option can be used to set and save new quota accounting path for given
+\fIquota_id\fP
+.TP
+\fB\-R\fP
+Set special relative path to \fIquota_file\fR. If this option is specified,
+quota file location will depends on path to quota accounting dir: if your quota
+accounting path is /path/to/\fIsomewhere\fR/ than quota file will be 
+/path/to/quota.\fIsomewhere\fR. If this option is not specified, quota file
+location is /var/vzquota/quota.\fIquota_id\fP. All commands accept this
+option.
 .TP
 \fB\-c\fP \fIquota_file\fP
 This option allows to specify a \fIquota_file\fR to work with.
-All commands accept this option. If this option is not specified, the file
-\fB/var/vzquota/quota.\fIquotaid\fP is used by default.
+All commands accept this option. If this option is not specified, default
+file location depends on whether \fB-R\fP option is specified or not
+(see above).
 .TP
 \fB\-f\fP
 Force option. Accepted by \fBdrop\fP, \fBon\fP, \fBoff\fP, \fBstat\fP,
@@ -253,5 +272,11 @@ Quota is marked as dirty in file; this status is returned by
 .TP
 .B 11
 Quota file does not exist
+.TP
+.B 12
+Internal error
+.TP
+.B 13
+Can't obtain mount point
 .SH COPYRIGHT
 Copyright (C) 2000-2006, SWsoft. Licensed under GNU GPL.
