@@ -337,6 +337,9 @@ static void correct_grace(struct vz_quota_stat *stat, struct ugid_quota *ugid_st
 static void calc_current_usage(struct qf_data *qd)
 {
 	struct scan_info info;
+	char *path;
+
+	path = get_quota_path(qd);
 	
 	/* whether to scan user/group info */
 	if (qd->head.flags & QUOTA_UGID_ON)
@@ -344,7 +347,7 @@ static void calc_current_usage(struct qf_data *qd)
 	else
 		info.ugid_stat = NULL;
 
-	scan(&info, qd->path);
+	scan(&info, path);
 	qd->stat.dq_stat.bcurrent = info.size;
 	qd->stat.dq_stat.icurrent = info.inodes;
 
@@ -412,8 +415,9 @@ static void quota_init()
 	memset(&qd.stat, 0, sizeof(struct vz_quota_stat));
 	free_ugid_quota(&qd.ugid_stat);
 	clean_ugid_info(&qd.ugid_stat);
-	
-	qd.path = xstrdup(mount_point);
+
+	if (!(option & FL_RELATIVE))
+		qd.path = xstrdup(mount_point);
 	qd.head.flags = 0;
 	set_quotas_from_line(&qd);
 	      	
@@ -452,10 +456,14 @@ static void quota_on()
 	    || read_quota_file(fd, &qd, IOF_ALL) < 0)
 		exit(EC_QUOTAFILE);
 
-	if (option & FL_PATH
-	    && strcmp(qd.path, mount_point)) {
-		if (qd.path) free(qd.path);
-		qd.path = xstrdup(mount_point);
+	if ((option & FL_PATH) && qd.path && strcmp(qd.path, mount_point)) {
+		if (qd.path_len) {
+			/*
+			 * Change mount point only if it's not relative
+			 */
+			if (qd.path) free(qd.path);
+			qd.path = xstrdup(mount_point);
+		}
 		option |= FL_FORCE;
 	}
 
@@ -788,7 +796,15 @@ static void quota_set()
 	// this hack was added 'cause migrate need functionality when
 	// it changes VE private for given VE (in one partition), so 
 	// we don't want to recalculate quota and do simple quota file renaming
-	if (option & FL_PATH) qd.path = mount_point;
+	if (option & FL_PATH) {
+		if (qd.path_len && qd.path) {
+			qd.path = xstrdup(mount_point);
+			debug(LOG_INFO, "Set mount point path to %s\n",
+				mount_point);
+		} else
+			debug(LOG_INFO, "Mount point path will not be changed, "
+				"it's relative\n");
+	}
 
 	/* mark quota dirty */
 	if (option & FL_FORCE) qd.head.flags |= QUOTA_DIRTY;

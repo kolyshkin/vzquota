@@ -554,6 +554,9 @@ int parse_options(int argc, char **argv, char *short_options,
 		}
 	}
 
+	if ((option & FL_RELATIVE) && (option & FL_CONF_FILE))
+		error(EC_USAGE, 0, "-c and -R options can't be set together\n");
+
 	return optind;
 }
 

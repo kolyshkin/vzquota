@@ -355,8 +355,28 @@ void free_quota_data(struct qf_data *qd)
 {
 	free_ugid_quota(&(qd->ugid_stat));
 	if (qd->path) free(qd->path);
+	qd->path = NULL;
 
 	init_quota_data(qd);
+}
+
+/* Get quota accounting point path */
+char *get_quota_path(struct qf_data *qd)
+{
+	char *path;
+
+	path = NULL;
+	if (mount_point)
+		path = mount_point;
+	else if (qd->path)
+		path = qd->path;
+
+	if (path)
+		debug(LOG_DEBUG, "Actual quota path: %s\n", path);
+	else
+		error(EC_NOMOUNTPOINT, 0, "path to mount point can't be read "
+			"from config file,\nuse -p <mount_point> option\n");
+	return path;
 }
 
 /* converts quota between different versions */
@@ -488,7 +508,7 @@ int quota_syscall_on(struct qf_data *qd)
 	ASSERT(qd);
 	stat = &qd->stat;
 	ugid_stat = &qd->ugid_stat;
-	path = qd->path;
+	path = get_quota_path(qd);
 	
 	/* create new quota */
 	rc = vzquotactl_syscall(VZ_DQ_CREATE, quota_id, stat, NULL);
@@ -974,6 +994,9 @@ int vzquotactl_ugid_setgrace(struct qf_data *data, int type, struct dq_info *vzd
 {
 	struct vz_quota_ugid_setinfo inf;
 	long err;
+	char *path;
+
+	path = get_quota_path(data);
 
 	memset(&inf, 0, sizeof(inf));
 	vzdqinfo2dqinfo(vzdqinfo, &inf.dqi);
@@ -988,7 +1011,7 @@ int vzquotactl_ugid_setgrace(struct qf_data *data, int type, struct dq_info *vzd
 		_info.dqi_igrace = vzdqinfo->iexpire;
 
 		err = quotactl_syscall(Q_SETGRACE, 
-				type, data->path, 0, (void *) &_info);
+				type, path, 0, (void *) &_info);
 	}
 	return err;
 }
@@ -997,6 +1020,9 @@ int vzquotactl_ugid_setlimit(struct qf_data *data, int id, int type, struct dq_s
 {
 	struct vz_quota_ugid_setlimit lim;
 	long err;
+	char *path;
+
+	path = get_quota_path(data);
 
 	memset(&lim, 0, sizeof(lim));
 	dqstat2dqblk(vzdqlim, &lim.dqb);
@@ -1015,7 +1041,7 @@ int vzquotactl_ugid_setlimit(struct qf_data *data, int id, int type, struct dq_s
 		dqb.dqb_ihardlimit = vzdqlim->ihardlimit;
 
 		err = quotactl_syscall(Q_SETQLIM,
-			type, data->path, id, (void *) &dqb);
+			type, path, id, (void *) &dqb);
 	}
 	return err;
 }
@@ -1387,10 +1413,16 @@ int read_quota_file(int fd, struct qf_data *q, int io_flags)
 		if (err < 0) return err;
 
 		if (q->path) free(q->path);
-		q->path = xmalloc( q->path_len + 1);
-		
-		err = read_field(fd, q->path, q->path_len, QF_OFF_PATH(struct_size));
-		if (err < 0) return err;
+		q->path = NULL;
+
+		if (q->path_len) {
+			q->path = xmalloc( q->path_len + 1);
+			err = read_field(fd, q->path, q->path_len,
+				QF_OFF_PATH(struct_size));
+			if (err < 0) return err;
+		}
+		debug(LOG_DEBUG, "Read quota path: %s\n",
+			q->path ? q->path : "[relative]");
 	}
 
 	/* read 2-level quota info */
@@ -1506,7 +1538,7 @@ int write_quota_file(int fd, struct qf_data *q, int io_flags)
 	if (io_flags & IOF_PATH)
 	{
 		debug(LOG_DEBUG, "Writing mount point path to file\n");
-		q->path_len = strlen(q->path);
+		q->path_len = q->path ? strlen(q->path) : 0;
 
 		err = write_field(fd, &(q->path_len), sizeof(size_t),
 				  QF_OFF_PATH_LEN(sizeof(struct vz_quota_stat)));

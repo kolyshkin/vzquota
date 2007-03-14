@@ -25,7 +25,7 @@
 #endif
 #define VZQUOTA_FILES_PATH_VZ3 VARDIR "/vzquota"
 #define VZQUOTA_FILE_NAME "quota"
-#define DEFAULT_PRIVATE_FS	"/fs/"
+#define DEFAULT_PRIVATE_FS	"fs"
 
 #define MAGIC_V3	0xFEDCBC27	/* current quota v3 with ugid */
 #define MAGIC_V2	0xFEDCBB00	/* quota v2 */
@@ -173,6 +173,8 @@ void print_ugid_status(struct qf_data *qd);
 	
 void init_quota_data(struct qf_data *qd);
 void free_quota_data(struct qf_data *qd);
+
+char *get_quota_path(struct qf_data *qd);
 
 //int is_dummy_stat(struct *dq_stat stat);
 
