@@ -23,8 +23,9 @@
 #ifndef VARDIR
 #define VARDIR		"/var"
 #endif
-#define VZQUOTA_FILES_PATH VARDIR "/vzquota"
+#define VZQUOTA_FILES_PATH_VZ3 VARDIR "/vzquota"
 #define VZQUOTA_FILE_NAME "quota"
+#define DEFAULT_PRIVATE_FS	"/fs/"
 
 #define MAGIC_V3	0xFEDCBC27	/* current quota v3 with ugid */
 #define MAGIC_V2	0xFEDCBB00	/* quota v2 */

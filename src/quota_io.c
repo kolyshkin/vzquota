@@ -17,7 +17,12 @@
  */
 
 #include <sys/file.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <fcntl.h>
 #include <limits.h>
+#include <libgen.h>
 
 #include "common.h"
 #include "vzquota.h"
@@ -1015,14 +1020,153 @@ int vzquotactl_ugid_setlimit(struct qf_data *data, int id, int type, struct dq_s
 	return err;
 }
 
-static char* get_quota_file_name(unsigned int quota_id, char *buf, int bufsize)
+/*
+ * Return path to quota config according to VZ3 scheme
+ */
+static char* get_quota_file_name_vz3(unsigned int quota_id, char *buf,
+								int bufsize)
 {
-	snprintf(buf, bufsize, "%s/%s.%u", VZQUOTA_FILES_PATH,
-	     VZQUOTA_FILE_NAME, quota_id);
-	buf[bufsize - 1] = 0;
+	memset(buf, 0, bufsize);
+	bufsize--;
+
+	if (snprintf(buf, bufsize, "%s/%s.%u", VZQUOTA_FILES_PATH_VZ3,
+			VZQUOTA_FILE_NAME, quota_id) >= bufsize)
+		error(EC_NOQUOTAFILE, 0, "quota.%d file name is too long\n",
+			quota_id);
 	return buf;
 }
 
+/*
+ * Return path to quota config according to VZ4 scheme (or)
+ * exit on critical errors (or)
+ * return NULL if quota file name can't be obtained
+ */
+static char *get_quota_file_name_vz4(unsigned int quota_id, char *buf,
+	int bufsize)
+{
+	char *ve_priv;
+
+	memset(buf, 0, bufsize);
+	bufsize--;
+
+	if (option & FL_PATH) {
+		char *fs;
+		int ret;
+
+		ASSERT(mount_point);
+
+		ve_priv = dirname(xstrdup(mount_point));
+		fs = basename(xstrdup(mount_point));
+
+		/* ve_priv and fs can't be NULL even in case of error */
+
+		ret = snprintf(buf, bufsize, "%s/quota.%s", ve_priv, fs);
+
+		free(fs);
+		free(ve_priv);
+
+		if (ret >= bufsize) {
+			error(EC_NOQUOTAFILE, 0, "path to quota file is "
+				"too long\n");
+			return NULL;
+		}
+	} else {
+		/*
+		 * mount point is not set.
+		 *
+		 * TODO:
+		 * We have to parse VE config file to obtain path to VE
+		 * private and use default relative path to 'fs'.
+		 */
+		return NULL;
+	}
+
+	return buf;
+}
+
+/*
+ * Return path to quota config file for given quota_id, or exit with error
+ */
+char *get_quota_file_name(unsigned int quota_id, char *buf, int bufsize,
+							int flags)
+{
+	char *name;
+	struct stat s;
+	int ret;
+
+	if (flags & O_CREAT) {
+		/*
+		 * vzquota init QID -p path [-R]
+		 *
+		 * We just want to create a quota file. The -p /PATH/TO/FS
+		 * option (path to quota accounting point) must be used with
+		 * vzquota init.
+		 *
+		 * New files can be created in two places, it depends on
+		 * -R option, that specifies do we want to use relative path
+		 * or absolute path to accounting point:
+		 *
+		 *  (1) The -R option is set:
+		 *	quota config file is /PATH/TO/quota.FS, i.e.
+		 *	in most cases /vz/private/ID/quota.fs
+		 *
+		 *  (2) The -R option is omitted:
+		 *	quota config file will be created in old (VZ3) place:
+		 *	/var/vzquota/quota.QID
+		 */
+		if (option & FL_RELATIVE)
+			name = get_quota_file_name_vz4(quota_id, buf, bufsize);
+		else
+			name = get_quota_file_name_vz3(quota_id, buf, bufsize);
+		debug(LOG_DEBUG, "Create config file %s\n", name);
+		return name;
+	}
+
+	/*
+	 * vzquota on/off/drop/... QID
+	 *
+	 * Try to find quota file according to VZ4 format first.
+	 */
+	name = get_quota_file_name_vz4(quota_id, buf, bufsize);
+
+	/*
+	 * Now we want just to ensure, that VZ4 quota config file exists, and
+	 * if not - fall back to VZ3 path. Actual open() will be done later in
+	 * open_quota_file().
+	 */
+	if (name) {
+		ret = stat(name, &s);
+		if (ret < 0)
+			ret = errno;
+	} else
+		ret = ENOENT;
+
+	switch (ret) {
+	case 0:
+		/* Ok, VZ4 file looks alive */
+		debug(LOG_DEBUG, "Open: looking for %s ... ok\n", name);
+		break;
+	case ENOENT:
+		if (name)
+			debug(LOG_DEBUG, "Open: looking for %s ... failed\n",
+									name);
+		/* 
+		 * Backward compatibility, try to find it in old (VZ3) place
+		 * This behaviour is disabled when the -R option is used.
+		 */
+		if (!(option & FL_RELATIVE)) {
+			name = get_quota_file_name_vz3(quota_id, buf, bufsize);
+			debug(LOG_DEBUG, "set quota config name to %s\n", name);
+			break;
+		}
+		/* Fall through ... */
+	default:
+		error(EC_QUOTAFILE, errno,
+			"can't open quota config file %s\n", name);
+	}
+
+	return name;
+}
 
 int get_quota_version(struct vz_quota_header *head)
 {
@@ -1041,7 +1185,7 @@ int unlink_quota_file(unsigned int quota_id, const char *name)
 	int status;
 
 	if (!name)
-		name = get_quota_file_name(quota_id, buf, MAXFILENAMELEN);
+		name = get_quota_file_name(quota_id, buf, MAXFILENAMELEN, 0);
 
 	if ((status = unlink(name)) < 0)
 	{
@@ -1149,7 +1293,10 @@ int open_quota_file(unsigned int quota_id, const char *name, int flags)
 	char buf[MAXFILENAMELEN];
 
 	if (!name)
-		name = get_quota_file_name(quota_id, buf, MAXFILENAMELEN);
+		name = get_quota_file_name(quota_id, buf, MAXFILENAMELEN,
+									flags);
+
+	actual_config_file = xstrdup(name);
 
 	if ((fd = open(name, flags, 00600)) < 0)
 	{

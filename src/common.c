@@ -32,6 +32,7 @@ __u32 option;
 unsigned int quota_id;
 char *mount_point = NULL;
 char *config_file = NULL;
+char *actual_config_file = NULL;	/* path to actually used config file */
 
 struct vz_quota_stat limits;
 //struct vz_quota_stat ugid_limits;

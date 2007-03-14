@@ -73,6 +73,7 @@ extern __u32 option;
 extern unsigned int quota_id;
 extern char *mount_point;
 extern char *config_file;
+extern char *actual_config_file;
 
 extern struct vz_quota_stat limits;
 extern struct vz_quota_ugid_stat ug_config;
@@ -100,6 +101,13 @@ extern const char* program_name;
 					 * and does not indicate a error; DO NOT USE IT! */
 
 #define EC_NOQUOTAFILE		11	/* quota file does not exist */
+#if 0
+/*
+ * Reserverd error for the future purposes
+ */
+#define EC_CONFIGFILE		12 	/* can't open/parse VE config file */
+#endif
+#define EC_NOMOUNTPOINT		13	/* can't get quota mount point */
 
 #define EC_ASSERT		255
 

@@ -380,7 +380,7 @@ static void quota_init()
 		if (errno == EEXIST)
 		{
 			debug(LOG_WARNING, "Quota file exists, it will be overwritten\n");
-			if (unlink_quota_file(quota_id, config_file) < 0)
+			if (unlink_quota_file(quota_id, actual_config_file) < 0)
 				exit(EC_QUOTAFILE);
 			fd = open_quota_file(quota_id, config_file, O_RDWR|O_CREAT);
 		}
@@ -390,7 +390,17 @@ static void quota_init()
 		/* add remove created quota file in case of error */
 		struct quota_file_t * qf = xmalloc(sizeof(struct quota_file_t));
 		qf->id = quota_id;
-		qf->path = config_file;
+		/*
+		 * Use actual_config_file, because config_file can be NULL,
+		 * but we've just created a file in the default place.
+		 *
+		 * NB! Internal redesign is required - the config_file
+		 * pointer is global, but it's also used as an argument to some
+		 * functions. The same for some other variables. VZ3 vzquota 
+		 * internal interface was simple, but now there are some
+		 * additional issues: compatibility, new options for example.
+		 */
+		qf->path = actual_config_file;
 		register_cleaner(quota_file_cleaner, qf);
 	}
 	memset(&qd.stat, 0, sizeof(struct vz_quota_stat));
