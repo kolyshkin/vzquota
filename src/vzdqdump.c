@@ -41,7 +41,7 @@ static char dump_usage[] =
 "\t-T\texpiration times\n"
 ;
 
-static char dump_short_options[] = "-c:fGUT";
+static char dump_short_options[] = "c:fGUT";
 static struct option dump_long_options[] = {
 	{"quota-file", required_argument, NULL, 'c'},
 	{"kernel", no_argument, NULL, 'f'},

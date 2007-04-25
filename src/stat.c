@@ -39,7 +39,7 @@ static char quotashow_usage[] =
 "\t[-t,--user-group]\n"
 "\t(Specify the --help global option for a list of other help options)\n";
 
-static char vestat_short_options[] = "-p:c:tfR";
+static char vestat_short_options[] = "p:c:tfR";
 static struct option vestat_long_options[] = {
 	{"quota-file", required_argument, NULL, 'c'},
 	{"user-group", no_argument, NULL, 't'},
@@ -48,7 +48,7 @@ static struct option vestat_long_options[] = {
 	{0, 0, 0, 0}
 };
 	
-static char quotashow_short_options[] = "-p:c:tR";
+static char quotashow_short_options[] = "p:c:tR";
 static struct option quotashow_long_options[] = {
 	{"quota-file", required_argument, NULL, 'c'},
 	{"user-group", no_argument, NULL, 't'},
