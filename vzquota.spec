@@ -1,14 +1,14 @@
 Summary: Virtuozzo disk quota control utility
 Name: vzquota
 Version: 3.0.9
-Release: 1
-Vendor: SWsoft
+Release: 1%{?dist}
 License: GPL
 Group: System Environment/Kernel
-Source: vzquota-%{version}.tar.bz2 
+Source: http://download.openvz.org/utils/%{name}/%{version}/src/%{name}-%{version}.tar.bz2
 ExclusiveOS: Linux
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Requires: vzquotamod
+URL: http://openvz.org/
 
 %description
 Virtual Private Servers as a part of Virtuozzo product family
@@ -43,6 +43,14 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %{_mandir}/man8/vzdqload.8*
 
 %changelog
+* Wed Jun 13 2007 Andy Shevchenko <andriy@asplinux.com.ua> - 3.0.9-1
+- fixed according to Fedora Packaging Guidelines:
+  - use dist tag
+  - removed Vendor tag
+  - added URL tag
+  - use full url for source
+  - changed BuildRoot tag
+
 * Mon Oct 09 2006 Dmitry Mishin <dim-at-openvz.org> 3.0.9-1
 - added README and NEWS files
 - deleted debian directory (requested by debian package maintainers)
