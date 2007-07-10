@@ -1078,18 +1078,22 @@ static char *get_quota_file_name_vz4(unsigned int quota_id, char *buf,
 	if (option & FL_PATH) {
 		char *fs;
 		int ret;
+		char *p1, *p2;
 
 		ASSERT(mount_point);
 
-		ve_priv = dirname(xstrdup(mount_point));
-		fs = basename(xstrdup(mount_point));
+		p1 = xstrdup(mount_point);
+		p2 = xstrdup(mount_point); 
+
+		ve_priv = dirname(p1);
+		fs = basename(p2);
 
 		/* ve_priv and fs can't be NULL even in case of error */
 
 		ret = snprintf(buf, bufsize, "%s/quota.%s", ve_priv, fs);
 
-		free(fs);
-		free(ve_priv);
+		free(p1);
+		free(p2);
 
 		if (ret >= bufsize) {
 			error(EC_NOQUOTAFILE, 0, "path to quota file is "
