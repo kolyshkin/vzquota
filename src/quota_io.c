@@ -657,6 +657,10 @@ int quota_syscall_on(struct qf_data *qd)
 
 	/* turn quota on */
 	for (retry = 0; ; retry++) {
+		 /*
+		  * If this is the last chance to enable quota, allocate memory buffer
+		  * and ask kernel to find currently used files.
+		  */
 		if (retry == MAX_RETRY) {
 			buf = (char *)malloc(getpagesize());
 			*buf = '\0';
