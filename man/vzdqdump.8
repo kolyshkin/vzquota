@@ -1,4 +1,4 @@
-.TH vzdqdump 8 "Jul 18, 2005" "Virtuozzo" "Virtual Environment"
+.TH vzdqdump 8 "Mar 06, 2008" "Virtuozzo" "Containers"
 
 .SH NAME
 \fBvzdqdump\fR, \fBvzdqload\fR \- dump, load user/group quotas
@@ -17,9 +17,9 @@ from a quota file or the kernel to stdout.
 \fBvzdqload\fP loads user/group quota information provided by
 \fBvzdqdump\fP from stdin into quota file. Quota must be stopped at load.
 
-The \fBquota_id\fP must be numeric-only identifier. Note, that Quota ID is
-not the same as VE ID. One VE can mount several filesystems and each of them
-can have it's own quotas.
+The \fBquota_id\fP must be numeric-only identifier. Note, that quota ID is
+not the same as container ID (CTID). One container can mount several
+filesystems and each of them can have its own quotas.
 
 .SH OPTIONS
 .SS General

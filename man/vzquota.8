@@ -1,6 +1,6 @@
-.TH vzquota 8 "Mar 12, 2007" "Virtuozzo" "Virtual Environment"
+.TH vzquota 8 "Mar 06, 2008" "Virtuozzo" "Containers"
 .SH NAME
-vzquota - manipulate VE disk quotas
+vzquota - manipulate containers disk quotas
 .SH SYNOPSIS
 .\" .TP
 \fBvzquota\fP [\fIquota_options\fP] \fIcommand quota_id\fR [\fIcommand_options\fP]
@@ -11,12 +11,12 @@ vzquota - manipulate VE disk quotas
 .\" .TP
 .\" \fBvzquota setlimit2\fP \fIquota_id\fP [\fB-u\fR|\fB-g\fR] \fIugid\fP \fIblock-softlimit block-hardlimit inode-softlimit inode-hardlimit\fP
 .SH DESCRIPTION
-\fBvzquota\fP controls disk quotas for Virtuozzo Virtual Environment.
-These are per-VE disk quotas set from Virtuozzo host system.
+\fBvzquota\fP controls disk quotas for Virtuozzo/OpenVZ container.
+These are per-container disk quotas set from Virtuozzo/OpenVZ host system.
 
-The \fBquota_id\fP must be numeric-only identifier. Note, that Quota ID is 
-not the same as VE ID. One VE can mount several filesystems and each of them 
-can have it's own quotas.
+The \fBquota_id\fP must be numeric-only identifier. Note, that quota ID is not
+the same as container ID (CTID). One container can mount several filesystems and
+each of them can have its own quotas.
 .SH OPTIONS
 Argument \fIcommand\fR can be one of the following:
 \fBinit\fP, \fBdrop\fP, \fBon\fP, \fBoff\fP, \fBsetlimit\fP, \fBsetlimit2\fP,
@@ -92,9 +92,9 @@ on. Stores new limits in the quota file.
 Show usage statistics and update it in quota file. Option \fB-f\fP causes to
 do not read and update quota file, just print statistics from kernel.
 Option \fB-t\fP specifies to show and update user/group based quota statistics
-for a VE. Works on running VE only. The command with \fB-t\fP option
-flushes all quota statistics from kernel to file and thus may be used
-for backup purposes.
+for a container. Works on running containers only. The command with \fB-t\fP
+option flushes all quota statistics from kernel to file and thus may be used for
+backup purposes.
 .TP
 \fBshow\fP
 Show usage and limits info from quota file. Option \fB-t\fP specifies to show
@@ -106,8 +106,8 @@ All these options are required in \fBinit\fP command, and optionally
 accepted in \fBon\fP and \fBsetlimit\fP commands.
 .TP
 \fB\-s\fR, \fB--sub\-quotas\fP \fB1\fI|\fB0\fP
-Enables or disables user/group based quota inside the VE. Here \fB1\fP means
-to enable, and \fB0\fP - to disable.
+Enables or disables user/group based quota inside the container. Here \fB1\fP
+means to enable, and \fB0\fP - to disable.
 By default user/group quota is disabled. This option is accepted by
 \fBinit\fP and \fBon\fP commands.
 .TP
@@ -121,7 +121,7 @@ For \fBsetlimit2\fP command only. Limits will be applied to the specified
 .TP
 \fB\-u\fR, \fB--ugid\-limit\fP \fIlimit\fP
 For \fBon\fP and \fBsetlimit\fP commands only.
-Specifies maximum number of user and group IDs allowed in the VE.
+Specifies maximum number of user and group IDs allowed in the container.
 If the value is \fB0\fP, user/group quota will not be accounted.
 Default value is \fI0\fP. There is one note concerning \fBsetlimit\fP command.
 If first-level quota is running, second-level quota is active
@@ -223,7 +223,8 @@ period has expired, the grace column contain special \fBnone\fP value.
 If \fB\-t\fP is specified the following information is displayed also:
 
 \fBUser/group quota\fP - on|off, active|inactive. Status of the 2nd level quota.
-on|off defines the state of the 2nd level quota at the next start of VE quota.
+on|off defines the state of the 2nd level quota at the next start of
+container quota.
 active|inactive indicates the current state of the 2nd level quota in kernel.
 
 \fBUgids\fP - \fIloaded\fP, \fItotal\fP and \fIlimit\fP. \fIloaded\fP is number of records (uids or gids) in kernel. \fItotal\fP is number of unique records located in the kernel and quota file. \fIlimit\fP is current kernel limits of records amount. \fIloaded\fP and \fItotal\fP may be greater then \fIlimit\fP.
