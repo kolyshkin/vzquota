@@ -504,10 +504,10 @@ static void error_quotaon(struct qf_data *qd, int err, char *buf)
 	/* try to find the reason */
 	if (err == EBUSY) {
 		error(0, 0, "\tPossible reasons:");
-		error(0, 0, "\t- VE root is already mounted");
-		error(0, 0, "\t- there are opened files inside VE prvate"
+		error(0, 0, "\t- Container's root is already mounted");
+		error(0, 0, "\t- there are opened files inside Container's private"
 				" area");
-		error(0, 0, "\t- your current working directory is inside VE");
+		error(0, 0, "\t- your current working directory is inside Container's");
 		error(0, 0, "\t  private area");
 		if (buf) {
 			error(0, 0, "\tCurrently used file(s):\n%s", buf);
@@ -698,10 +698,10 @@ static void error_quotaoff(struct qf_data *qd, int err, char *buf)
 		error(0, 0, "Forced quota off failed. Device is busy\n");
 	else if (err == EBUSY) {
 		error(0, 0, "\tPossible reasons:");
-		error(0, 0, "\t- VE root is not unmounted");
-		error(0, 0, "\t- there are opened files inside VE root/private"
+		error(0, 0, "\t- Container's root is not unmounted");
+		error(0, 0, "\t- there are opened files inside container's root/private"
 				" area");
-		error(0, 0, "\t- your current working directory is inside VE");
+		error(0, 0, "\t- your current working directory is inside a container directory");
 		error(0, 0, "\t  root/private area");
 		if (buf) {
 			error(0, 0, "\tCurrently used file(s):\n%s", buf);
