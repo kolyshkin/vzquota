@@ -29,8 +29,8 @@
 #include <string.h>
 #include <asm/types.h>
 
-#include <linux/vzquota.h>
-#include <linux/vzctl_quota.h>
+#include "linux/vzquota.h"
+#include "linux/vzctl_quota.h"
 
 #include "kcompat.h"
 
