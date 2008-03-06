@@ -1,6 +1,6 @@
-Summary: Virtuozzo disk quota control utility
+Summary: Virtuozzo/OpenVZ disk quota control utility
 Name: vzquota
-Version: 3.0.11
+Version: 3.0.12
 Release: 1%{?dist}
 License: GPL
 Group: System Environment/Kernel
@@ -11,11 +11,8 @@ Requires: vzquotamod
 URL: http://openvz.org/
 
 %description
-Virtual Private Servers as a part of Virtuozzo product family
-are full isolated "virtual machines" available for a user without total
-hardware emulation like solutions of VMware type.
 This utility allows system administator to control disk quotas
-for such environments.
+for Virtuozzo/OpenVZ containers.
 
 %prep
 %setup
@@ -43,6 +40,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %{_mandir}/man8/vzdqload.8*
 
 %changelog
+* Thu Mar 06 2008 Kir Kolyshkin <kir@openvz.org> - 3.0.12-1
+- updated description, VE->container terminology change
+
 * Wed Jun 13 2007 Andy Shevchenko <andriy@asplinux.com.ua> - 3.0.9-1
 - fixed according to Fedora Packaging Guidelines:
   - use dist tag
