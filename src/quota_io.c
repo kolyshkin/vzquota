@@ -684,6 +684,34 @@ int quota_syscall_on(struct qf_data *qd)
 	return 0;
 }
 
+/*
+ * Show hints and error message in case of quota off failed.
+ */
+static void error_quotaoff(struct qf_data *qd, int err, char *buf)
+{
+	/* show error message */
+	error(0, err, "Quota off syscall for id %d", quota_id);
+
+	/* try to find the reason */
+	if (err == EBUSY) {
+		error(0, 0, "\tPossible reasons:");
+		error(0, 0, "\t- VE root is not unmounted");
+		error(0, 0, "\t- there are opened files inside VE root/private"
+				" area");
+		error(0, 0, "\t- your current working directory is inside VE");
+		error(0, 0, "\t  root/private area");
+		if (buf) {
+			error(0, 0, "\tCurrently used file(s):\n%s", buf);
+			if (strlen(buf) > getpagesize() - 2)
+				error(0, 0, "\t... more files found");
+		}
+	}
+
+	/* exit with error status */
+	error(EC_VZCALL, 0, NULL);
+
+}
+
 /* turn quota off
  * return 0 if success,
  * OENT if quota is off */
@@ -695,14 +723,25 @@ int quota_syscall_off(struct qf_data *qd)
 	int broken = 0;
 	struct vz_quota_stat *stat;
 	struct ugid_quota *ugid_stat;
+	char *buf;
 
 	ASSERT(qd);
 	stat = &qd->stat;
 	ugid_stat = &qd->ugid_stat;
 	
+	buf = NULL;
+
 	/* turn quota off */
 	for (retry = 0; ; retry++) {
-		rc = vzquotactl_syscall(VZ_DQ_OFF, quota_id, NULL, NULL);
+		/*
+		 * If this is the last chance to disable quota, allocate memory buffer
+		 * and ask kernel to find currently used files.
+		 */
+		if (retry == MAX_RETRY && debug_level >= LOG_INFO) {
+			buf = (char *)malloc(getpagesize());
+			*buf = '\0';
+		}
+		rc = vzquotactl_syscall(VZ_DQ_OFF, quota_id, NULL, buf);
 		if (rc >= 0) break;
 		if (errno == EALREADY) { /* quota is created and off */
 			broken = 1;
@@ -710,7 +749,7 @@ int quota_syscall_off(struct qf_data *qd)
 		}
 		if (errno == ENOENT) return rc;		/* quota is not created */
 		if (errno != EBUSY || retry >= MAX_RETRY)
-			error(EC_VZCALL, errno, "Quota off syscall for id %d", quota_id);
+			error_quotaoff(qd, errno, buf);
 		usleep(sleeptime * 1000);
 		sleeptime = sleeptime * 2;
 	}
