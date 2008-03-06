@@ -216,7 +216,9 @@ part of disk quota implementation.
 
 \fBhardlimit\fP - resource limit. Current usage can't exceed this limit.
 
-\fBgrace\fP - during this amount of time usage can exceed softlimit.
+\fBgrace\fP - during this amount of time usage can exceed softlimit. If
+a soft limit has not been exceeded the grace column is blank. If the grace
+period has expired, the grace column contain special \fBnone\fP value.
 
 If \fB\-t\fP is specified the following information is displayed also:
 
