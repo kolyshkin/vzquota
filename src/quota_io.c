@@ -493,6 +493,33 @@ void convert_quota_stat( void *dest, int dest_ver, void *src, int src_ver)
 	}
 }
 
+/*
+ * Show hints and error message in case of quota on failed.
+ */
+static void error_quotaon(struct qf_data *qd, int err, char *buf)
+{
+	/* show error message */
+	error(0, err, "Quota on syscall for id %d", quota_id);
+
+	/* try to find the reason */
+	if (err == EBUSY) {
+		error(0, 0, "\tPossible reasons:");
+		error(0, 0, "\t- VE root is already mounted");
+		error(0, 0, "\t- there are opened files inside VE prvate"
+				" area");
+		error(0, 0, "\t- your current working directory is inside VE");
+		error(0, 0, "\t  private area");
+		if (buf) {
+			error(0, 0, "\tCurrently used file(s):\n%s", buf);
+			if (strlen(buf) > getpagesize() - 2)
+				error(0, 0, "\t... more files found");
+		}
+	}
+
+	/* exit with error status */
+	error(EC_VZCALL, 0, NULL);
+}
+
 /* turn quota on
  * return 0 if success,
  * <0 if quota is on */
@@ -504,6 +531,7 @@ int quota_syscall_on(struct qf_data *qd)
 	struct vz_quota_stat *stat;
 	struct ugid_quota *ugid_stat;
 	char *path;
+	char *buf;
 
 	ASSERT(qd);
 	stat = &qd->stat;
@@ -625,17 +653,23 @@ int quota_syscall_on(struct qf_data *qd)
 		ugid_stat->info.buf_size = ugid_stat->dquot_size;
 	}
 
+	buf = NULL;
+
 	/* turn quota on */
 	for (retry = 0; ; retry++) {
-		rc = vzquotactl_syscall(VZ_DQ_ON, quota_id, NULL, path);
+		if (retry == MAX_RETRY) {
+			buf = (char *)malloc(getpagesize());
+			*buf = '\0';
+		}
+		rc = vzquotactl_syscall(VZ_DQ_ON, quota_id,
+					(struct vz_quota_stat *)buf, path);
 		if (rc >= 0) break;
 		if (errno != EBUSY || retry >= MAX_RETRY) {
 			int save_errno;
 
 			save_errno = errno;
 			vzquotactl_syscall(VZ_DQ_DESTROY, quota_id, NULL, NULL);
-			error(EC_VZCALL, save_errno, "Quota on syscall for %d", 
-					quota_id);
+			error_quotaon(qd, save_errno, buf);
 		}
 		usleep(sleeptime * 1000);
 		sleeptime = sleeptime * 2;
