@@ -693,7 +693,10 @@ static void error_quotaoff(struct qf_data *qd, int err, char *buf)
 	error(0, err, "Quota off syscall for id %d", quota_id);
 
 	/* try to find the reason */
-	if (err == EBUSY) {
+	if (err == EBUSY && (option & FL_FORCE))
+		/* Hmm, shouldn't be */
+		error(0, 0, "Forced quota off failed. Device is busy\n");
+	else if (err == EBUSY) {
 		error(0, 0, "\tPossible reasons:");
 		error(0, 0, "\t- VE root is not unmounted");
 		error(0, 0, "\t- there are opened files inside VE root/private"
@@ -705,6 +708,9 @@ static void error_quotaoff(struct qf_data *qd, int err, char *buf)
 			if (strlen(buf) > getpagesize() - 2)
 				error(0, 0, "\t... more files found");
 		}
+	} else if (err == EINVAL && (option & FL_FORCE)) {
+		error(0, 0, "\tPossible reasons:");
+		error(0, 0, "\t- Kernel doesn't support forced quota off");
 	}
 
 	/* exit with error status */
@@ -723,12 +729,14 @@ int quota_syscall_off(struct qf_data *qd)
 	int broken = 0;
 	struct vz_quota_stat *stat;
 	struct ugid_quota *ugid_stat;
+	int cmd;
 	char *buf;
 
 	ASSERT(qd);
 	stat = &qd->stat;
 	ugid_stat = &qd->ugid_stat;
-	
+
+	cmd = VZ_DQ_OFF;
 	buf = NULL;
 
 	/* turn quota off */
@@ -741,7 +749,7 @@ int quota_syscall_off(struct qf_data *qd)
 			buf = (char *)malloc(getpagesize());
 			*buf = '\0';
 		}
-		rc = vzquotactl_syscall(VZ_DQ_OFF, quota_id, NULL, buf);
+		rc = vzquotactl_syscall(cmd, quota_id, NULL, buf);
 		if (rc >= 0) break;
 		if (errno == EALREADY) { /* quota is created and off */
 			broken = 1;
@@ -752,6 +760,17 @@ int quota_syscall_off(struct qf_data *qd)
 			error_quotaoff(qd, errno, buf);
 		usleep(sleeptime * 1000);
 		sleeptime = sleeptime * 2;
+
+		/*
+		 * When 'force' option is set, try to use VZ_DQ_OFF first,
+		 * and in case of failure use VZ_DQ_OFF_FORCED.
+		 */
+		if (errno == EBUSY && (option & FL_FORCE) &&
+				(retry >= (MAX_RETRY - 1))) {
+			cmd = VZ_DQ_OFF_FORCED;
+			/* Mark as dirty now */
+			qd->head.flags |= QUOTA_DIRTY;
+		}
 	}
 	
 	/* get VE stat */

@@ -29,6 +29,7 @@
 #define VZ_DQ_OFF		8 /* remove mark, don't destroy qmblk */
 #define VZ_DQ_SETLIMIT		9 /* set new limits */
 #define VZ_DQ_GETSTAT		10 /* get usage statistic */
+#define VZ_DQ_OFF_FORCED	11 /* forced off */
 /* set of syscalls to maintain UGID quotas */
 #define VZ_DQ_UGID_GETSTAT	1 /* get usage/limits for ugid(s) */
 #define VZ_DQ_UGID_ADDSTAT	2 /* set usage/limits statistic for ugid(s) */
