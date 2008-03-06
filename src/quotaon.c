@@ -500,7 +500,8 @@ static void quota_on()
 	
 	if ((qd.head.flags & QUOTA_DIRTY) && !rescan && !(option & FL_NOCHECK))
 	{
-		debug(LOG_INFO, "quota usage is invalid for id %d, recalculating disk usage...\n", quota_id);
+		debug(LOG_WARNING, "quota usage is invalid for id %d, "
+			"recalculating disk usage...\n", quota_id);
 		rescan = 1;
 	}
 
