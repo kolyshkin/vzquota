@@ -58,7 +58,7 @@ install: $(PROGS)
 	$(INSTALL) -d $(DESTDIR)$(MANDIR)/man8
 	$(INSTALL) -d $(DESTDIR)$(VARDIR)/vzquota
 	for file in $(PROGS); do \
-		$(INSTALL) -s -m 755 $$file $(DESTDIR)$(SBINDIR)/$$file; \
+		$(INSTALL) -m 755 $$file $(DESTDIR)$(SBINDIR)/$$file; \
 	done
 	for file in $(MANS); do \
 		$(INSTALL) -m 644 ../man/$$file $(DESTDIR)$(MANDIR)/man8/$$file; \
@@ -71,15 +71,15 @@ clean:
 	find . -regex '.*[~#].*' | xargs rm -f
 
 vzquota: $(OBJS_main)
-	$(CC) $(CFLAGS) -o $@ $(OBJS_main)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS_main)
 
 vzdqcheck: $(OBJS_check)
-	$(CC) $(CFLAGS) -o $@ $(OBJS_check)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS_check)
 
 vzdqdump: $(OBJS_dump)
-	$(CC) $(CFLAGS) -o $@ $(OBJS_dump)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS_dump)
 
 vzdqload: $(OBJS_load)
-	$(CC) $(CFLAGS) -o $@ $(OBJS_load)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS_load)
 
 -include .depend
