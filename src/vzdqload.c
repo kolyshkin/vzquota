@@ -20,7 +20,9 @@
 #include <sys/types.h>
 
 /* to include vsscanf() */
-#define __USE_ISOC99
+#ifndef __USE_ISOC99
+# define __USE_ISOC99
+#endif
 #include <stdio.h>
 
 #include <stdlib.h>
