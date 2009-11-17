@@ -233,7 +233,7 @@ void scan_dir(struct scan_info *info, dev_t root_dev)
 	struct dirent *de;
 	const char *pathname = info->dir_stack->name;
 
-	if (chdir(pathname) != 0) 
+	if (chdir(pathname) != 0)
 		error(EC_SYSTEM, errno, "quota check : chdir '%s'", pathname);
 
 	// check on special case
@@ -250,7 +250,7 @@ void scan_dir(struct scan_info *info, dev_t root_dev)
 
 	while ((de = readdir(dp)) != (struct dirent *) NULL) {
 		const char * p = de->d_name;
-		// skip '.', '..' 
+		// skip '.', '..'
 		if (p[0] == '.' && (p[1] == '\0'
 				    || (p[1] == '.' && p[2] == '\0')))
 			continue;

@@ -67,7 +67,7 @@ struct dq_info {
 	unsigned	flags;	   /* see previos defines */
 };
 
-struct vz_quota_stat  {
+struct vz_quota_stat {
 	struct dq_stat dq_stat;
 	struct dq_info dq_info;
 };
@@ -96,19 +96,19 @@ struct vz_quota_iface {
 struct vz_quota_ugid_stat {
 	unsigned int	limit;	/* max amount of ugid records */
 	unsigned int	count;	/* amount of ugid records */
-	unsigned int	flags;	
+	unsigned int	flags;
 };
 
 struct _if_dqblk {
-        u_int64_t dqb_bhardlimit;
-        u_int64_t dqb_bsoftlimit;
-        u_int64_t dqb_curspace;
-        u_int64_t dqb_ihardlimit;
-        u_int64_t dqb_isoftlimit;
-        u_int64_t dqb_curinodes;
-        u_int64_t dqb_btime;
-        u_int64_t dqb_itime;
-        u_int32_t dqb_valid;
+	u_int64_t dqb_bhardlimit;
+	u_int64_t dqb_bsoftlimit;
+	u_int64_t dqb_curspace;
+	u_int64_t dqb_ihardlimit;
+	u_int64_t dqb_isoftlimit;
+	u_int64_t dqb_curinodes;
+	u_int64_t dqb_btime;
+	u_int64_t dqb_itime;
+	u_int32_t dqb_valid;
 };
 
 struct vz_quota_ugid_setlimit {
@@ -118,10 +118,10 @@ struct vz_quota_ugid_setlimit {
 };
 
 struct _if_dqinfo {
-        u_int64_t dqi_bgrace;
-        u_int64_t dqi_igrace;
-        u_int32_t dqi_flags;
-        u_int32_t dqi_valid;
+	u_int64_t dqi_bgrace;
+	u_int64_t dqi_igrace;
+	u_int32_t dqi_flags;
+	u_int32_t dqi_valid;
 };
 
 struct vz_quota_ugid_setinfo {

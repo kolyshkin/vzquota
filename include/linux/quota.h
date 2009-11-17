@@ -41,8 +41,8 @@
 #define __DQUOT_VERSION__	"dquot_6.5.1"
 #define __DQUOT_NUM_VERSION__	6*10000+5*100+1
 
-typedef __kernel_uid32_t qid_t; /* Type in which we store ids in memory */
-typedef __u64 qsize_t;          /* Type in which we store sizes */
+typedef __kernel_uid32_t qid_t;	/* Type in which we store ids in memory */
+typedef __u64 qsize_t;		/* Type in which we store sizes */
 
 /* Size of blocks in which are counted size limits */
 #define QUOTABLOCK_BITS 10

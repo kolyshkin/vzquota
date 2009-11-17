@@ -189,7 +189,7 @@ static struct option quotareloadugid_long_options[] = {
 static void set_quotas_from_line(struct qf_data *qd)
 {
 	struct vz_quota_stat *stat;
-       	struct ugid_quota *ugid_stat;
+	struct ugid_quota *ugid_stat;
 
 	ASSERT(qd);
 	stat = &qd->stat;
@@ -198,7 +198,7 @@ static void set_quotas_from_line(struct qf_data *qd)
 	/* user enters 1k blocks */
 	if (option & FL_BHL)
 		stat->dq_stat.bhardlimit = block2ker(limits.dq_stat.bhardlimit);
-			
+
 	if (option & FL_BSL)
 		stat->dq_stat.bsoftlimit = block2ker(limits.dq_stat.bsoftlimit);
 
@@ -211,14 +211,14 @@ static void set_quotas_from_line(struct qf_data *qd)
 		stat->dq_stat.isoftlimit = limits.dq_stat.isoftlimit;
 	if (option & FL_IET)
 		stat->dq_info.iexpire = limits.dq_info.iexpire;
-	
+
 	if (option & FL_SQT) {
 		/* mark quota dirty if ugid quota is changing OFF -> ON */
 		if (!(qd->head.flags & QUOTA_UGID_ON) &&
 		//if (!(ugid_stat->info.config.flags & VZDQUG_ON) &&
 		    (ug_config.flags & VZDQUG_ON))
 			qd->head.flags |= QUOTA_DIRTY;
-		
+
 		qd->head.flags &= ~QUOTA_UGID_ON;
 		if (ug_config.flags & VZDQUG_ON)
 			qd->head.flags |= QUOTA_UGID_ON;
@@ -230,7 +230,7 @@ static void set_quotas_from_line(struct qf_data *qd)
 				//(ug_config.flags & VZDQUG_ON))
 				(qd->head.flags & QUOTA_UGID_ON))
 			qd->head.flags |= QUOTA_DIRTY;
-		
+
 		ugid_stat->info.config.limit = ug_config.limit;
 	}
 }
@@ -239,48 +239,48 @@ static void check_limits(struct qf_data *qd, int what_given)
 {
 	struct vz_quota_stat *qstat;
 	struct ugid_quota *ugid_stat;
-	struct dq_stat *stat; 
-		
+	struct dq_stat *stat;
+
 	ASSERT(qd);
 	qstat = &(qd->stat);
 	ugid_stat = &(qd->ugid_stat);
 	stat = &(qstat->dq_stat);
 
 	if ((stat->bhardlimit < stat->bsoftlimit)
-			       	&& (what_given ? (option & (FL_BHL | FL_BSL)) : 1))
+				&& (what_given ? (option & (FL_BHL | FL_BSL)) : 1))
 		error(EC_USAGE, 0, "block_hard_limit [%u] < block_soft_limit [%u]\n",
 		      ker2block(stat->bhardlimit), ker2block(stat->bsoftlimit));
 
 	if ((stat->ihardlimit < stat->isoftlimit)
-			       	&& (what_given ? (option & (FL_IHL | FL_ISL)) : 1))
+				&& (what_given ? (option & (FL_IHL | FL_ISL)) : 1))
 		error(EC_USAGE, 0, "inode_hard_limit [%u] < inode_soft_limit [%u]\n",
 		      stat->ihardlimit, stat->isoftlimit);
 
 	if ((stat->bhardlimit < stat->bcurrent)
-			       	&& (what_given ? (option & FL_BHL) : 1))
+				&& (what_given ? (option & FL_BHL) : 1))
 		debug(LOG_WARNING, "block_hard_limit [%u] < block_current_usage [%u]\n",
 		      ker2block(stat->bhardlimit), ker2block(stat->bcurrent));
 	else if ((stat->bsoftlimit < stat->bcurrent)
-			       	&& (what_given ? (option & FL_BSL) : 1))
+				&& (what_given ? (option & FL_BSL) : 1))
 		debug(LOG_WARNING, "block_soft_limit [%u] < block_current_usage [%u]\n",
 			ker2block(stat->bsoftlimit), ker2block(stat->bcurrent));
 
 	if ((stat->ihardlimit < stat->icurrent)
-			       	&& (what_given ? (option & FL_IHL) : 1))
+				&& (what_given ? (option & FL_IHL) : 1))
 		debug(LOG_WARNING, "inode_hard_limit [%u] < inode_current_usage [%u]\n",
 		      stat->ihardlimit, stat->icurrent);
 	else if ((stat->isoftlimit < stat->icurrent)
-			       	&& (what_given ? (option & FL_ISL) : 1))
+				&& (what_given ? (option & FL_ISL) : 1))
 		debug(LOG_WARNING, "inode_soft_limit [%u] < inode_current_usage [%u]\n",
 		      stat->isoftlimit, stat->icurrent);
 
 	if (!(qd->head.flags & QUOTA_UGID_ON)) return;
-	
+
 	if ((ugid_stat->info.config.limit < ugid_stat->info.buf_size)
-			       	&& (what_given ? (option & FL_UGL) : 1))
+				&& (what_given ? (option & FL_UGL) : 1))
 		debug(LOG_WARNING, "ugid_limit [%u] < ugid_current_usage [%u]\n",
 		      ugid_stat->info.config.limit, ugid_stat->info.buf_size);
-	
+
 	//TODO check limits for ugids -> warnings
 }
 
@@ -291,16 +291,16 @@ static void correct_grace(struct vz_quota_stat *stat, struct ugid_quota *ugid_st
 	struct dq_info *i;
 	int type;
 	time_t nowt;
-	
+
 	ASSERT(stat);
-	
+
 	nowt = time(NULL);
-	
+
 	/* VE quota */
 	if (stat) {
 		s = &(stat->dq_stat);
 		i = &(stat->dq_info);
-		
+
 		if (s->bcurrent <= s->bsoftlimit)
 			s->btime = 0;
 		else if (s->btime == 0)
@@ -340,7 +340,7 @@ static void calc_current_usage(struct qf_data *qd)
 	char *path;
 
 	path = get_quota_path(qd);
-	
+
 	/* whether to scan user/group info */
 	if (qd->head.flags & QUOTA_UGID_ON)
 		info.ugid_stat = &(qd->ugid_stat);
@@ -371,9 +371,9 @@ static void quota_init()
 	struct qf_data qd;
 
 	init_quota_data(&qd);
-	
+
 	ASSERT(mount_point);
-	
+
 	rc = quota_syscall_stat(&qd, 1);
 	if (rc == 0)
 		error(EC_RUN, 0, "Quota is running, stop it first");
@@ -420,7 +420,7 @@ static void quota_init()
 		qd.path = xstrdup(mount_point);
 	qd.head.flags = 0;
 	set_quotas_from_line(&qd);
-	      	
+
 	calc_current_usage(&qd);
 	check_limits(&qd, 0);
 
@@ -491,13 +491,13 @@ static void quota_on()
 	if (rc >= 0)
 		/* quota is on*/
 		goto out_run;
-	
+
 	if ((qd.head.flags & QUOTA_ON) && !(option & FL_NOCHECK)) {
 		debug(LOG_WARNING, "Incorrect quota shutdown for id %d, "
 			"recalculating disk usage\n", quota_id);
 		rescan = 1;
 	}
-	
+
 	if ((qd.head.flags & QUOTA_DIRTY) && !rescan && !(option & FL_NOCHECK))
 	{
 		debug(LOG_WARNING, "quota usage is invalid for id %d, "
@@ -515,7 +515,7 @@ static void quota_on()
 	 * ugid quota on/off, that acts on calc_current_usage() */
 	if (rescan)
 		calc_current_usage(&qd);
-	
+
 	check_limits(&qd, 0);
 	correct_grace(&qd.stat, &qd.ugid_stat);
 	reset_ugid_flags(&qd.ugid_stat, UGID_ALL); /* clear all ugid flags*/
@@ -539,14 +539,14 @@ static void quota_on()
 	print_ugid_status(&qd);
 #endif
 	free_quota_data(&qd);
-	
+
 	close_quota_file(fd);
 	debug(LOG_INFO, "Quota was switched on for id %d\n", quota_id);
 	return;
 
-    out_run:
-        debug(LOG_WARNING, "Quota is running for id %d already\n", quota_id);
-        exit(EC_RUN);
+out_run:
+	debug(LOG_WARNING, "Quota is running for id %d already\n", quota_id);
+	exit(EC_RUN);
 }
 
 static void quota_off()
@@ -612,7 +612,7 @@ static void quota_off()
 			debug(LOG_WARNING, "Repairing quota: it was incorrectly"
 				" marked as stopped for id %d\n", quota_id);
 	}
-	
+
 	qd.head.flags &= ~QUOTA_ON;
 
 	/* we must read and write whole files cause of checksum */
@@ -627,7 +627,7 @@ static void quota_off()
 	print_status(&qd);
 	print_ugid_status(&qd);
 #endif
-	
+
 	free_quota_data(&qd);
 	debug(LOG_INFO, "Quota was switched off for id %d\n", quota_id);
 	return;
@@ -698,7 +698,7 @@ static void quota_reload_ugid()
 	free(temp_qd);
 
 	ugid_stat = &qd.ugid_stat;
-	
+
 	/* set ugid config */
 	rc = vzquotactl_ugid_syscall(VZ_DQ_UGID_SETCONFIG, quota_id, 0, 0,
 			&(ugid_stat->info.config));
@@ -775,11 +775,11 @@ static void quota_set()
 			"saving new limits to file only\n", quota_id);
 		*/
 	}
-	
+
 	set_quotas_from_line(&qd);
 	check_limits(&qd, 1);
 	correct_grace(&qd.stat, NULL);
-	
+
 	if (rc >= 0)
 		if (quota_syscall_setlimit(&qd, !(option & FL_LIMITS), !(option & FL_UGIDS)) < 0) {
 			if (errno == EBUSY)
@@ -795,7 +795,7 @@ static void quota_set()
 
 	// Write modified path also
 	// this hack was added 'cause migrate need functionality when
-	// it changes VE private for given VE (in one partition), so 
+	// it changes VE private for given VE (in one partition), so
 	// we don't want to recalculate quota and do simple quota file renaming
 	if (option & FL_PATH) {
 		if (qd.path_len && qd.path) {
@@ -850,14 +850,14 @@ static void quota_setugid(int ugid, struct dq_stat * lim, struct dq_info * info)
 	if (quota_syscall_stat(&data, 0) < 0) {
 		/* indicate that quota is off */
 		error(EC_NOTRUN, 0, "Quota accounting is off");
-	} 
+	}
 
 	if (!(data.ugid_stat.info.config.flags & VZDQUG_ON)) {
 		/* 2-level is off */
 		error(EC_NOTRUN, 0, "Second level quota accounting is off");
-	} 
+	}
 
-	type = (option & FL_L2_GROUP) ? GRPQUOTA : USRQUOTA;	
+	type = (option & FL_L2_GROUP) ? GRPQUOTA : USRQUOTA;
 
 	if (info != NULL) {
 		data.ugid_stat.info.ugid_info[type] = *info;
@@ -883,7 +883,7 @@ static void quota_setugid(int ugid, struct dq_stat * lim, struct dq_info * info)
 			} else
 				error(EC_VZCALL, errno, "quotactl failed");
 		}
-		
+
 		/* add to file */
 		dq = lookup_dquot_(&data.ugid_stat, ugid, type);
 		if (dq == NODQUOT) {
@@ -904,10 +904,10 @@ static void quota_setugid(int ugid, struct dq_stat * lim, struct dq_info * info)
 		}
 	}
 
-	
+
 	/* we must read and write whole files cause of checksum */
 	if (write_quota_file(fd, &data, IOF_ALL) < 0)
-		exit(EC_QUOTAFILE);	
+		exit(EC_QUOTAFILE);
 
 	close_quota_file(fd);
 	free_quota_data(&data);
@@ -995,7 +995,7 @@ int quotaugidset_proc(int argc, char **argv)
 		unsigned int ugid;
 
 		/* get ugid */
-		if (argc != 5 
+		if (argc != 5
 		    || str2uint(*argv++, &ugid) < 0)
 			usage(quotaugidset_usage);
 
@@ -1007,7 +1007,7 @@ int quotaugidset_proc(int argc, char **argv)
 		    || str2u32(*argv++, &stat.ihardlimit) < 0)
 			usage(quotaugidset_usage);
 
-		quota_setugid(ugid, &stat, NULL);		
+		quota_setugid(ugid, &stat, NULL);
 	}
 
 	return 0;

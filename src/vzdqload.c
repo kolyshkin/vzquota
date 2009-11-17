@@ -71,7 +71,7 @@ int read_line(FILE *f, char *line, size_t bufsize,
 {
 	int i;
 	va_list pvar;
-	
+
 	memset(line, 0, bufsize);
 	do if (! fgets(line, bufsize-1, f)) {
 		/* end of file */
@@ -79,7 +79,7 @@ int read_line(FILE *f, char *line, size_t bufsize,
 		return 0;
 	}
 	while (line[0] == 0 || line[0] == '#');
-	
+
 	va_start(pvar, fmt);
 	i = vsscanf(line, fmt, pvar);
 	va_end(pvar);
@@ -154,7 +154,7 @@ int main(int argc, char **argv)
 
 		return EC_SUCCESS;
 	}
-	
+
 	/* ugid quota is on */
 	q = &qd.ugid_stat;
 //	qd.head.flags |= QUOTA_UGID_ON;
@@ -188,14 +188,14 @@ int main(int argc, char **argv)
 
 	/* ugid objs */
 	if ((option & (FL_DUMP_LIMITS | FL_DUMP_EXPTIME)) && ugidnum) {
-		
+
 		for (i = 0; i < ugidnum; i++) {
 			unsigned int id, type;
 			unsigned int bsoft, bhard, isoft, ihard;
 			unsigned long btime, itime;
 			struct dquot *dq = NODQUOT;
 			struct vz_quota_iface *s;
-				
+
 			if (! (option & FL_DUMP_EXPTIME))
 				/* limits only */
 				rc = read_line(file, line, bufsize, 7, "%s%u%u%u%u%u%u",
@@ -223,7 +223,7 @@ int main(int argc, char **argv)
 			if (dq == NODQUOT)
 				dq = add_dquot_(q, id, type);
 			s = &dq->obj.istat;
-			
+
 			/* limits */
 			if (option & FL_DUMP_LIMITS) {
 				s->qi_stat.bsoftlimit = block2ker(bsoft);

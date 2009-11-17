@@ -95,12 +95,12 @@ long vzquotactl_syscall(
 		const char *ve_root);
 
 long vzquotactl_ugid_syscall(
-		int _cmd,                /* subcommand */
-		unsigned int _quota_id,  /* quota id where it applies to */
+		int _cmd,		 /* subcommand */
+		unsigned int _quota_id,	 /* quota id where it applies to */
 		unsigned int _ugid_index,/* for reading statistic. index of first
 					    uid/gid record to read */
 		unsigned int _ugid_size, /* size of ugid_buf array */
-		void *addr               /* user-level buffer */
+		void *addr		 /* user-level buffer */
 );
 
 #define VZCTL_QUOTA_CTL_OLD	_IOWR(VZDQCTLTYPE, 0, struct vzctl_quotactl)
@@ -114,25 +114,25 @@ long vzquotactl_ugid_syscall(
 void convert_quota_stat( void *dest, int dest_ver, void *src, int src_ver);
 
 /* quota version 2 */
-struct vz_quota_stat_old2  {
+struct vz_quota_stat_old2 {
 	/* bytes limits */
-	__u64   bhardlimit;     /* absolute limit on disk bytes alloc */
-	__u64   bsoftlimit;     /* preferred limit on disk bytes */
-	time_t  bexpire;        /* expire timeout for excessive disk use */
-	time_t  btime;          /* time limit for excessive disk use */
-	__u64   bcurrent;       /* current bytes count */
+	__u64	bhardlimit;	/* absolute limit on disk bytes alloc */
+	__u64	bsoftlimit;	/* preferred limit on disk bytes */
+	time_t	bexpire;	/* expire timeout for excessive disk use */
+	time_t	btime;		/* time limit for excessive disk use */
+	__u64	bcurrent;	/* current bytes count */
 	/* inodes limits */
-	__u32   ihardlimit;     /* absolute limit on allocated inodes */
-	__u32   isoftlimit;     /* preferred inode limit */
-	__u32   icurrent;       /* current # allocated inodes */
-	time_t  iexpire;        /* expire timeout for excessive inode use */
-	time_t  itime;          /* time limit for excessive inode use */
+	__u32	ihardlimit;	/* absolute limit on allocated inodes */
+	__u32	isoftlimit;	/* preferred inode limit */
+	__u32	icurrent;	/* current # allocated inodes */
+	time_t	iexpire;	/* expire timeout for excessive inode use */
+	time_t	itime;		/* time limit for excessive inode use */
 	/* behaviour options */
-	int     options;        /* see VZ_QUOTA_OPT_* defines */
+	int	options;	/* see VZ_QUOTA_OPT_* defines */
 };
 
 /* quota version 1 */
-struct vz_quota_stat_old1  {
+struct vz_quota_stat_old1 {
 	/* bytes limits */
 	__u32	bhardlimit;	/* absolute limit on disk 1K blocks alloc */
 	__u32	bsoftlimit;	/* preferred limit on disk 1K blocks */

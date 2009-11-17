@@ -32,9 +32,9 @@
 #define MAGIC_V1	0xFEDCBA98	/* quota v1 */
 #define MAGIC_CURRENT	MAGIC_V3
 
-#define MAXFILENAMELEN 128	/* Maximal length of filename */
+#define MAXFILENAMELEN	128	/* Maximal length of filename */
 
-#define E_FILECORRUPT  0x2000	/* Quota file corrupted */
+#define E_FILECORRUPT	0x2000	/* Quota file corrupted */
 
 #define QUOTA_ON	0x0001
 
@@ -50,15 +50,15 @@ struct vz_quota_header {
 	int flags;
 };
 
-#define MAXQUOTAS 2
-#define USRQUOTA  0             /* element used for user quotas */
-#define GRPQUOTA  1             /* element used for group quotas */
+#define MAXQUOTAS	2
+#define USRQUOTA	0	/* element used for user quotas */
+#define GRPQUOTA	1	/* element used for group quotas */
 
-#define DQUOTHASHSIZE 1023	/* Size of hashtable for dquots from file */
+#define DQUOTHASHSIZE	1023	/* Size of hashtable for dquots from file */
 
 #define QUOTANAMES { \
-	"user",    /* USRQUOTA */ \
-	"group"   /* GRPQUOTA */ \
+	"user",		/* USRQUOTA */ \
+	"group"		/* GRPQUOTA */ \
 }
 
 #define NODQUOT ((struct dquot *)NULL)
@@ -73,7 +73,7 @@ struct ugid_info {
 
 struct ugid_obj {
 	struct vz_quota_iface	istat;
-	unsigned int 		flags; /* set of UGID_OBJ_xxx */
+	unsigned int		flags; /* set of UGID_OBJ_xxx */
 };
 
 struct dquot {
@@ -85,7 +85,7 @@ struct dquot {
 struct ugid_quota {
 	struct ugid_info	info;		/* general quota info */
 	unsigned int		dquot_size;	/* number of allocated entries in dquot_hash */
-	struct dquot 		*dquot_hash[MAXQUOTAS][DQUOTHASHSIZE];
+	struct dquot		*dquot_hash[MAXQUOTAS][DQUOTHASHSIZE];
 };
 
 /* check sum */
@@ -97,7 +97,7 @@ struct qf_data {
 	struct vz_quota_header	head;		/* quota flags and version */
 	struct vz_quota_stat	stat;		/* 1-level quota stat */
 	size_t			path_len;	/* mount pount path length */
-	char			*path;		/* mount point path */ 
+	char			*path;		/* mount point path */
 	struct ugid_quota	ugid_stat;	/* 2-level quota stat and ugid objects */
 	chksum_t		chksum;		/* quota file checksum*/
 };
@@ -146,7 +146,7 @@ struct dquot *add_dquot(struct ugid_quota *q, struct ugid_obj *obj);
 
 void drop_dquot_(struct ugid_quota *q, unsigned int id, int type);
 void drop_dquot(struct ugid_quota *q, struct ugid_obj *obj);
-	
+
 void reset_dquot_search();
 struct dquot *get_next_dquot(struct ugid_quota *q);
 void sort_dquot(struct ugid_quota *q, struct dquot **obj);
@@ -168,9 +168,9 @@ int comp_dquot(const void *pa, const void *pb);
 /* these func are defined in src/stat.c */
 void print_status(struct qf_data *qd);
 void print_ugid_status(struct qf_data *qd);
-	
+
 /* quota file */
-	
+
 void init_quota_data(struct qf_data *qd);
 void free_quota_data(struct qf_data *qd);
 

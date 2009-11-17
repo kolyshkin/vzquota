@@ -142,16 +142,16 @@ int comp_dquot(const void *pa, const void *pb)
 {
 	struct dquot *a = *(struct dquot **)pa;
 	struct dquot *b = *(struct dquot **)pb;
-	
+
 	return (a->obj.istat.qi_id > b->obj.istat.qi_id) ? 1 :
 		((a->obj.istat.qi_id < b->obj.istat.qi_id) ? -1 : 0);
 }
 
 /* search facility */
-unsigned int 	cur_index;
-unsigned int 	cur_id;
-unsigned int 	cur_type;
-struct dquot 	*cur_dquot;
+unsigned int	cur_index;
+unsigned int	cur_id;
+unsigned int	cur_type;
+struct dquot	*cur_dquot;
 
 void reset_dquot_search()
 {
@@ -193,14 +193,14 @@ void sort_dquot(struct ugid_quota *q, struct dquot **obj)
 		obj[i] = dq;
 	qsort(obj, q->dquot_size, sizeof(struct dquot *), &comp_dquot);
 }
-	
+
 /* drop dummy entries */
 void drop_dummy_ugid(struct ugid_quota *q)
 {
 	struct dquot *dquot;
 	void **buf = NULL;
 	size_t i, n = 0, size = 0;
-	
+
 	/* select ugids */
 	reset_dquot_search();
 	while( (dquot = get_next_dquot(q)) != NODQUOT) {
@@ -226,7 +226,7 @@ void drop_ugid_by_flags(struct ugid_quota *q, unsigned int mask)
 	struct dquot *dquot;
 	void **buf = NULL;
 	size_t i, n = 0, size = 0;
-	
+
 	/* select ugids */
 	reset_dquot_search();
 	while( (dquot = get_next_dquot(q)) != NODQUOT) {
@@ -250,7 +250,7 @@ void free_ugid_quota(struct ugid_quota *q)
 {
 	unsigned int i, cnt;
 	struct dquot *dquot, *dquot_free;
-	
+
 	for (cnt = 0; cnt < MAXQUOTAS; cnt++) {
 		for (i = 0; i < DQUOTHASHSIZE; i++) {
 			dquot = q->dquot_hash[cnt][i];
@@ -314,24 +314,24 @@ void reset_ugid_usage( struct ugid_quota *q)
 void reset_ugid_flags( struct ugid_quota *q, unsigned int mask)
 {
 	struct dquot *dquot;
-	
+
 	reset_dquot_search();
 	while ((dquot = get_next_dquot(q)) != NODQUOT) {
 		dquot->obj.flags &= ~mask;
 	}
-	
+
 }
 
 /* are there dirty ugid objects */
 int is_ugid_dirty( struct ugid_quota *q)
 {
 	struct dquot *dquot;
-	
+
 	reset_dquot_search();
 	while ((dquot = get_next_dquot(q)) != NODQUOT) {
 		if (dquot->obj.flags & UGID_DIRTY) return 1;
 	}
-	return 0;	
+	return 0;
 }
 
 /* quota file data init; it should be called as A MUST */
@@ -385,7 +385,7 @@ void convert_quota_stat( void *dest, int dest_ver, void *src, int src_ver)
 	struct vz_quota_stat *q;
 	struct vz_quota_stat_old1 *q1;
 	struct vz_quota_stat_old2 *q2;
-	
+
 	if ( (!dest) || (!src)
 		|| (!((dest_ver == QUOTA_V3) || (dest_ver == QUOTA_V2) || (dest_ver == QUOTA_V1)))
 		|| (!((src_ver == QUOTA_V3) || (src_ver == QUOTA_V2) || (src_ver == QUOTA_V1)))
@@ -394,11 +394,11 @@ void convert_quota_stat( void *dest, int dest_ver, void *src, int src_ver)
 	if (dest_ver == QUOTA_V1) {
 		if (src_ver == QUOTA_V1) {			/* v1 -> v1 */
 			memcpy( dest, src, sizeof(struct vz_quota_stat_old1));
-			
+
 		} else if (src_ver == QUOTA_V2) {		/* v2 -> v1 */
 			q1 = (struct vz_quota_stat_old1 *) dest;
 			q2 = (struct vz_quota_stat_old2 *) src;
-			
+
 			q1->bhardlimit	= size2block(q2->bhardlimit);
 			q1->bsoftlimit	= size2block(q2->bsoftlimit);
 			q1->bexpire	= q2->bexpire;
@@ -424,7 +424,7 @@ void convert_quota_stat( void *dest, int dest_ver, void *src, int src_ver)
 		if (src_ver == QUOTA_V1) {			/* v1 -> v2 */
 			q1 = (struct vz_quota_stat_old1 *) src;
 			q2 = (struct vz_quota_stat_old2 *) dest;
-			
+
 			q2->bhardlimit	= block2size(q1->bhardlimit);
 			q2->bsoftlimit	= block2size(q1->bsoftlimit);
 			q2->bexpire	= q1->bexpire;
@@ -439,14 +439,14 @@ void convert_quota_stat( void *dest, int dest_ver, void *src, int src_ver)
 
 			q2->options	= q1->options;
 
-			
+
 		} else if (src_ver == QUOTA_V2) {		/* v2 -> v2 */
 			memcpy( dest, src, sizeof(struct vz_quota_stat_old2));
-			
+
 		} else if (src_ver == QUOTA_V3) {		/* v3 -> v2 */
 			q2 = (struct vz_quota_stat_old2 *) dest;
 			q = (struct vz_quota_stat *) src;
-			
+
 			q2->bhardlimit	= ker2size(q->dq_stat.bhardlimit);
 			q2->bsoftlimit	= ker2size(q->dq_stat.bsoftlimit);
 			q2->bexpire	= q->dq_info.bexpire;
@@ -461,18 +461,18 @@ void convert_quota_stat( void *dest, int dest_ver, void *src, int src_ver)
 
 			q2->options	= 0;
 		}
-			
+
 	} else if (dest_ver == QUOTA_V3) {
 		if (src_ver == QUOTA_V1) {			/* v1 -> v3 */
 			struct vz_quota_stat_old2 t;
 			/* v1 -> v2 -> v3 */
 			convert_quota_stat( &t, QUOTA_V2, src, QUOTA_V1);
 			convert_quota_stat( dest, QUOTA_V3, &t, QUOTA_V2);
-			
+
 		} else if (src_ver == QUOTA_V2) {		/* v2 -> v3 */
 			q2 = (struct vz_quota_stat_old2 *) src;
 			q = (struct vz_quota_stat *) dest;
-			
+
 			q->dq_stat.bhardlimit	= size2ker(q2->bhardlimit);
 			q->dq_stat.bsoftlimit	= size2ker(q2->bsoftlimit);
 			q->dq_info.bexpire	= q2->bexpire;
@@ -486,7 +486,7 @@ void convert_quota_stat( void *dest, int dest_ver, void *src, int src_ver)
 			q->dq_stat.icurrent	= q2->icurrent;
 
 			q->dq_info.flags	= 0;
-			
+
 		} else if (src_ver == QUOTA_V3) {		/* v3 -> v3 */
 			memcpy( dest, src, sizeof(struct vz_quota_stat));
 		}
@@ -537,7 +537,7 @@ int quota_syscall_on(struct qf_data *qd)
 	stat = &qd->stat;
 	ugid_stat = &qd->ugid_stat;
 	path = get_quota_path(qd);
-	
+
 	/* create new quota */
 	rc = vzquotactl_syscall(VZ_DQ_CREATE, quota_id, stat, NULL);
 	if (rc < 0) {
@@ -554,7 +554,7 @@ int quota_syscall_on(struct qf_data *qd)
 	/* set kernel flag of user/group quota status */
 	if (qd->head.flags & QUOTA_UGID_ON)
 		ugid_stat->info.config.flags |= VZDQUG_ON;
-	
+
 	/* set ugid config */
 	if ((ugid_stat->info.config.flags & VZDQUG_ON)
 			&& !ugid_stat->info.config.limit)
@@ -583,19 +583,19 @@ int quota_syscall_on(struct qf_data *qd)
 		struct dquot *dq;
 		unsigned int b_size, loaded, i, lim;
 		struct vz_quota_iface *buf;
-	
+
 		/* drop dummy entries */
 		drop_dummy_ugid(ugid_stat);
-		
+
 		/* create temp buf */
 		reset_dquot_search();
 		for (i = 0; (dq = get_next_dquot(ugid_stat)) != NODQUOT; i++)
 			obj[i] = dq;
-		
+
 		/* sort if number of ugid objects is over the limit */
 		if (ugid_stat->dquot_size > ugid_stat->info.config.limit)
 			qsort(obj, ugid_stat->dquot_size, sizeof(struct dquot *), &comp_dquot);
-		
+
 		/* load by portions */
 		lim = min(ugid_stat->dquot_size, ugid_stat->info.config.limit);
 		b_size = IO_BUF_SIZE / sizeof(struct vz_quota_iface);
@@ -619,8 +619,8 @@ int quota_syscall_on(struct qf_data *qd)
 			}
 			debug(LOG_DEBUG, "%u ugids were successfully pushed\n", rc);
 			for (j = 0; j < (unsigned)rc; j++)
-				debug(LOG_DEBUG,"%5d: ugid (%s %u) was pushed\n", 
-					i + j, type2name(buf[j].qi_type),  buf[j].qi_id);
+				debug(LOG_DEBUG,"%5d: ugid (%s %u) was pushed\n",
+					i + j, type2name(buf[j].qi_type), buf[j].qi_id);
 			loaded += rc;
 		}
 		free(buf);
@@ -642,7 +642,7 @@ int quota_syscall_on(struct qf_data *qd)
 			dq->obj.flags |= UGID_LOADED;
 		}
 		ugid_stat->info.config.count = loaded;
-		
+
 		/* mark unloaded entries as dirty */
 		for (i = loaded; i < ugid_stat->dquot_size; i++) {
 			dq = obj[i];
@@ -678,13 +678,13 @@ int quota_syscall_on(struct qf_data *qd)
 		usleep(sleeptime * 1000);
 		sleeptime = sleeptime * 2;
 	}
-	
+
 	if (ugid_stat->info.config.flags & VZDQUG_ON)
 		debug(LOG_INFO, "User/group quota was activated with ugid limit of %u\n",
 				ugid_stat->info.config.limit);
 	else
 		debug(LOG_INFO, "User/group quota is off\n");
-	
+
 	return 0;
 }
 
@@ -776,12 +776,12 @@ int quota_syscall_off(struct qf_data *qd)
 			qd->head.flags |= QUOTA_DIRTY;
 		}
 	}
-	
+
 	/* get VE stat */
 	rc = vzquotactl_syscall(VZ_DQ_GETSTAT, quota_id, stat, NULL);
 	if (rc < 0)
 		error(EC_VZCALL, errno, "Quota getstat syscall for id %d", quota_id);
-		
+
 	/* get ugid config */
 	rc = vzquotactl_ugid_syscall(VZ_DQ_UGID_GETCONFIG, quota_id, 0, 0,
 			&(ugid_stat->info.config));
@@ -799,21 +799,21 @@ int quota_syscall_off(struct qf_data *qd)
 	/* get ugid objects */
 	if ((ugid_stat->info.config.flags & VZDQUG_ON)
 /* TODO save loaded objs if limit was set to 0 ?
- * 			&& ugid_stat->info.config.limit
+ *			&& ugid_stat->info.config.limit
 */
 			&& ugid_stat->info.config.count) {
 
 		struct dquot *dq;
 		unsigned int b_size, i;
 		struct vz_quota_iface *buf;
-		
+
 		/* get by portions */
 		b_size = IO_BUF_SIZE / sizeof(struct vz_quota_iface);
 		b_size = min(b_size, ugid_stat->info.config.count);
 
 		buf = xmalloc(b_size * sizeof(struct vz_quota_iface));
 
-		for (i = 0; i <  ugid_stat->info.config.count; i += b_size) {
+		for (i = 0; i < ugid_stat->info.config.count; i += b_size) {
 			int j;
 			j = min(b_size, ugid_stat->info.config.count - i);
 			debug(LOG_DEBUG, "get ugids from %u to %u...\n", i, i + j - 1);
@@ -828,16 +828,16 @@ int quota_syscall_off(struct qf_data *qd)
 					error(EC_VZCALL, 0, "Quota ugid_getstat syscall for id %d returned "
 						"ugid object with invalid type (id=%u, type=%u)",
 						quota_id, buf[j].qi_id, buf[j].qi_type);
-				
+
 				dq = lookup_dquot_(ugid_stat, buf[j].qi_id, buf[j].qi_type);
 				if (dq == NODQUOT) {
-					debug(LOG_DEBUG,"%5d: add ugid (%s %u)\n", 
-						i + j, type2name(buf[j].qi_type),  buf[j].qi_id);
+					debug(LOG_DEBUG,"%5d: add ugid (%s %u)\n",
+						i + j, type2name(buf[j].qi_type), buf[j].qi_id);
 					dq = add_dquot_(ugid_stat, buf[j].qi_id, buf[j].qi_type);
 				}
 				else {
 					debug(LOG_DEBUG, "%5d: update ugid (%s %u)\n",
-						i + j, type2name(buf[j].qi_type),  buf[j].qi_id);
+						i + j, type2name(buf[j].qi_type), buf[j].qi_id);
 				}
 				memcpy( &(dq->obj.istat), &buf[j], sizeof(struct vz_quota_iface));
 				dq->obj.flags &= ~UGID_LOADED;
@@ -847,20 +847,20 @@ int quota_syscall_off(struct qf_data *qd)
 
 		/* delete entries destroyed by kernel */
 		drop_ugid_by_flags(ugid_stat, UGID_LOADED);
-		
+
 		/* set number of ugid objects in buffer */
 		ugid_stat->info.buf_size = ugid_stat->dquot_size;
 
 		/* reset number of loaded ugid items */
 		ugid_stat->info.config.count = 0;
 
-	} 
+	}
 /*TODO see upper...
- * 	  else if ((ugid_stat->info.config.flags & VZDQUG_ON)
+ *	  else if ((ugid_stat->info.config.flags & VZDQUG_ON)
 			&& ugid_stat->info.config.count)
 		reset_ugid_flags(ugid_stat, UGID_LOADED);
 */
-	
+
 	/* drop user/group quota kernel status */
 	ugid_stat->info.config.flags &= ~VZDQUG_ON;
 
@@ -873,7 +873,7 @@ destroy:
 		errno = EALREADY;
 		return -1;
 	}
-	
+
 	return 0;
 }
 
@@ -899,10 +899,10 @@ int quota_syscall_stat(struct qf_data *qd, int no_ugid_stat)
 		else
 			error(EC_VZCALL, errno, "Quota getstat syscall for id %d", quota_id);
 	}
-		
+
 	/* return if no ugid stat is required */
 	if (no_ugid_stat) return 0;
-		
+
 	loop_counter = 0;
 ugid_loop:
 	if (loop_counter++ > 25)
@@ -931,7 +931,7 @@ ugid_loop:
 		unsigned int b_size, j;
 		struct vz_quota_iface *buf;
 		struct dquot **dq_buf = NULL;
-	
+
 		/* get the whole stat to minimize quota inconsistency */
 		b_size = ugid_stat->info.config.count + 100;
 		buf = xmalloc(b_size * sizeof(struct vz_quota_iface));
@@ -952,7 +952,7 @@ ugid_loop:
 		}
 		if (rc > 0)
 			dq_buf = xmalloc(b_size * sizeof(struct dquot *));
-		
+
 		for (j = 0; j < (unsigned)rc; j++) {
 			if (buf[j].qi_type >= MAXQUOTAS)
 				error(EC_VZCALL, 0, "Quota ugid_getstat syscall for id %d returned "
@@ -962,11 +962,11 @@ ugid_loop:
 			dq = lookup_dquot_(ugid_stat, buf[j].qi_id, buf[j].qi_type);
 			if (dq == NODQUOT) {
 				debug(LOG_DEBUG,"%5d: add ugid (%s %u)\n", 
-					j, type2name(buf[j].qi_type),  buf[j].qi_id);
+					j, type2name(buf[j].qi_type), buf[j].qi_id);
 				dq = add_dquot_(ugid_stat, buf[j].qi_id, buf[j].qi_type);
 			} else {
 				debug(LOG_DEBUG, "%5d: update ugid (%s %u)\n",
-					j, type2name(buf[j].qi_type),  buf[j].qi_id);
+					j, type2name(buf[j].qi_type), buf[j].qi_id);
 			}
 			memcpy( &(dq->obj.istat), &buf[j], sizeof(struct vz_quota_iface));
 			/* handle deleted entries */
@@ -1018,18 +1018,18 @@ int quota_syscall_setlimit(struct qf_data *qd, int no_stat, int no_ugid_stat)
 				error(EC_VZCALL, errno, "Quota setlimit syscall for id %d", quota_id);
 		}
 	}
-	
+
 	if (no_ugid_stat) return 0;
-	
+
 	/* get ugid config */
 	rc = vzquotactl_ugid_syscall(VZ_DQ_UGID_GETCONFIG, quota_id, 0, 0, &config);
 	if (rc < 0)
 		error(EC_VZCALL, errno, "Quota ugid_getconfig syscall for id %d", quota_id);
-	
+
 	/* nothing to change */
 	if (ugid_stat->info.config.limit == config.limit)
 		return 0;
-	
+
 	/* user/group quota is inactive in kernel */
 	if (!(ugid_stat->info.config.flags & VZDQUG_ON)) {
 		/* debug(LOG_WARNING, "User/group quota is inactive for id %d, "
@@ -1046,7 +1046,7 @@ int quota_syscall_setlimit(struct qf_data *qd, int no_stat, int no_ugid_stat)
 				"ugid limit change for id %d will take "
 				"effect after quota restart only\n", quota_id);
 		}
-	
+
 	/* set ugid limit */
 	rc = vzquotactl_ugid_syscall(VZ_DQ_UGID_SETCONFIG, quota_id, 0, 0, &(ugid_stat->info.config));
 	if (rc < 0)
@@ -1064,9 +1064,9 @@ int quota_syscall_setlimit(struct qf_data *qd, int no_stat, int no_ugid_stat)
 static void dqstat2dqblk(struct dq_stat * ulimit,
 		    struct _if_dqblk * dqb) {
 	dqb->dqb_bsoftlimit = ulimit->bsoftlimit;
-	dqb->dqb_bhardlimit = ulimit->bhardlimit;	
+	dqb->dqb_bhardlimit = ulimit->bhardlimit;
 	dqb->dqb_isoftlimit = ulimit->isoftlimit;
-	dqb->dqb_ihardlimit = ulimit->ihardlimit;	
+	dqb->dqb_ihardlimit = ulimit->ihardlimit;
 }
 
 static void vzdqinfo2dqinfo(struct dq_info * info,
@@ -1079,7 +1079,7 @@ static void vzdqinfo2dqinfo(struct dq_info * info,
 static int quotactl_syscall(int cmd, int type, const char * root_path, int id, void * data)
 {
 	char path[PATH_MAX];
-	/* we should chroot to VE priv dir */ 
+	/* we should chroot to VE priv dir */
 	sprintf(path, "%s/root", root_path);
 	if (chroot(path) != 0)
 		return -1;
@@ -1106,7 +1106,7 @@ int vzquotactl_ugid_setgrace(struct qf_data *data, int type, struct dq_info *vzd
 		_info.dqi_bgrace = vzdqinfo->bexpire;
 		_info.dqi_igrace = vzdqinfo->iexpire;
 
-		err = quotactl_syscall(Q_SETGRACE, 
+		err = quotactl_syscall(Q_SETGRACE,
 				type, path, 0, (void *) &_info);
 	}
 	return err;
@@ -1179,7 +1179,7 @@ static char *get_quota_file_name_vz4(unsigned int quota_id, char *buf,
 		ASSERT(mount_point);
 
 		p1 = xstrdup(mount_point);
-		p2 = xstrdup(mount_point); 
+		p2 = xstrdup(mount_point);
 
 		ve_priv = dirname(p1);
 		fs = basename(p2);
@@ -1276,7 +1276,7 @@ char *get_quota_file_name(unsigned int quota_id, char *buf, int bufsize,
 		if (name)
 			debug(LOG_DEBUG, "Open: looking for %s ... failed\n",
 									name);
-		/* 
+		/*
 		 * Backward compatibility, try to find it in old (VZ3) place
 		 * This behaviour is disabled when the -R option is used.
 		 */
@@ -1326,7 +1326,7 @@ static int reformat_quota (int fd)
 {
 	int rc;
 	struct qf_data qd;
-	
+
 	init_quota_data(&qd);
 	rc = read_quota_file(fd, &qd, IOF_ALL);
 	if (rc < 0) return rc;
@@ -1337,7 +1337,7 @@ static int reformat_quota (int fd)
 
 	/* v1 -> v3 */
 	//TODO saw@ thinks about recalculation
-	
+
 	rc = write_quota_file(fd, &qd, IOF_ALL);
 	if (rc < 0) return rc;
 	return 0;
@@ -1355,12 +1355,12 @@ int chksum_quota_file(int fd, chksum_t *chksum)
 	if (fsize <= 0) return EC_QUOTAFILE;
 	fsize -= sizeof(chksum_t);
 	debug(LOG_DEBUG, "Computing hash of quota file (first %u bytes)\n", fsize);
-	
+
 	memset(chksum, 0, sizeof(chksum_t));
 
 	b_size = (IO_BUF_SIZE / sizeof(chksum_t)) * sizeof(chksum_t);
 	buf = xmalloc(b_size);
-		
+
 	for (i = 0; i < fsize; i += b_size) {
 		size = (i + b_size < fsize) ? b_size : fsize - i;
 		memset(buf, 0, b_size);
@@ -1382,11 +1382,11 @@ int check_quota_file(int fd)
 {
 	int rc;
 	struct qf_data qd;
-		
+
 	init_quota_data(&qd);
 	rc = read_quota_file(fd, &qd, IOF_HEAD);
 	if (rc < 0) return rc;
-		
+
 	if (qd.version != QUOTA_CURRENT)
 	{
 		/* convert quota */
@@ -1411,7 +1411,7 @@ int check_quota_file(int fd)
 	free_quota_data(&qd);
 	return 0;
 }
-									
+
 
 int open_quota_file(unsigned int quota_id, const char *name, int flags)
 {
@@ -1433,7 +1433,7 @@ int open_quota_file(unsigned int quota_id, const char *name, int flags)
 			error(0, errno, "create quota file '%s'", name);
 		return fd;
 	}
-	
+
 	if (flock(fd, LOCK_EX | LOCK_NB) < 0)
 		error(EC_LOCK, 0, "can't lock quota file, some quota operations "
 		      "are performing for id %d", quota_id);
@@ -1455,7 +1455,7 @@ int read_field(int fd, void *field, size_t size, off_t offset)
 		error(0, errno, "read quota file");
 		return err;
 
-	} else 	if ((unsigned)err != size) {
+	} else if ((unsigned)err != size) {
 		error(0, 0, "quota file is corrupted");
 		return -E_FILECORRUPT;
 	}
@@ -1477,15 +1477,15 @@ int read_quota_file(int fd, struct qf_data *q, int io_flags)
 
 		/* get version */
 		q->version = get_quota_version( &(q->head));
-		if (q->version < 0) 
+		if (q->version < 0)
 			return -1;
 	}
 
 	/* read 1-level quota stat */
 	if (io_flags & IOF_STAT) {
 		void *st;
-		
-		debug(LOG_DEBUG, "Reading 1-level quota stat from file\n");	
+
+		debug(LOG_DEBUG, "Reading 1-level quota stat from file\n");
 		switch(q->version) {
 			case QUOTA_V1:	struct_size = sizeof(struct vz_quota_stat_old1);
 					break;
@@ -1530,7 +1530,7 @@ int read_quota_file(int fd, struct qf_data *q, int io_flags)
 		clean_ugid_info(&(q->ugid_stat));
 		if (q->version == QUOTA_CURRENT) {
 			debug(LOG_DEBUG, "Reading 2-level quota info from file\n");
-			
+
 			err = read_field(fd, &(q->ugid_stat.info), sizeof(struct ugid_info),
 				QF_OFF_UGID_INFO(q->path_len));
 			if (err < 0) return err;
@@ -1541,20 +1541,20 @@ int read_quota_file(int fd, struct qf_data *q, int io_flags)
 	if (io_flags & IOF_UGID_BUF) {
 		free_ugid_quota(&(q->ugid_stat));
 		if (q->version == QUOTA_CURRENT) {
-			
+
 			debug(LOG_DEBUG, "Reading ugid objects from file: %u entries total\n",
 				q->ugid_stat.info.buf_size);
 
 			if (q->ugid_stat.info.buf_size > 0) {
-			
+
 				size_t b_size, size, i, j;
 				struct ugid_obj *buf;
 				struct dquot *dq;
-				
+
 				b_size = IO_BUF_SIZE / sizeof(struct ugid_obj);
 				buf = xmalloc(b_size * sizeof(struct ugid_obj));
-		
-				for (i = 0; i <  q->ugid_stat.info.buf_size; i += b_size) {
+
+				for (i = 0; i < q->ugid_stat.info.buf_size; i += b_size) {
 					size = (i + b_size < q->ugid_stat.info.buf_size) ? b_size : q->ugid_stat.info.buf_size - i;
 					err = read_field(fd, buf, size * sizeof(struct ugid_obj),
 						QF_OFF_UGID_BUF(q->path_len) + i * sizeof(struct ugid_obj));
@@ -1594,7 +1594,7 @@ int read_quota_file(int fd, struct qf_data *q, int io_flags)
 		if (err < 0) return err;
 		debug(LOG_DEBUG, "Checksum is 64bit number %llu\n", q->chksum);
 	}
-	
+
 	debug(LOG_DEBUG, "Quota file was read\n");
 	return 0;
 }
@@ -1619,7 +1619,7 @@ int write_quota_file(int fd, struct qf_data *q, int io_flags)
 	q->head.magic = MAGIC_CURRENT;
 
 	debug(LOG_DEBUG, "Start writing quota file\n");
-	
+
 	/* write header */
 	if (io_flags & IOF_HEAD) {
 		debug(LOG_DEBUG, "Writing header to file\n");
@@ -1661,7 +1661,7 @@ int write_quota_file(int fd, struct qf_data *q, int io_flags)
 
 	/* write ugid objects */
 	if (io_flags & IOF_UGID_BUF) {
-		
+
 		debug(LOG_DEBUG, "Writing ugid objects to file: %u entries total\n",
 			q->ugid_stat.dquot_size);
 
@@ -1669,16 +1669,16 @@ int write_quota_file(int fd, struct qf_data *q, int io_flags)
 			error(EC_QUOTAFILE, 0, "Number of stored ugids objects is not equal to "
 				"one in 2-level quota statistics; "
 				"quota file is corrupted for id %d\n", quota_id);
-	
+
 		if (q->ugid_stat.dquot_size > 0) {
-	
+
 			size_t b_size, size, i, j;
 			struct ugid_obj *buf;
 			struct dquot *dq;
-				
+
 			b_size = IO_BUF_SIZE / sizeof(struct ugid_obj);
 			buf = xmalloc(b_size * sizeof(struct ugid_obj));
-	
+
 			reset_dquot_search();
 			size = 0;
 			for (i = 0; ; i++) {
@@ -1706,17 +1706,17 @@ int write_quota_file(int fd, struct qf_data *q, int io_flags)
 					"quota file is corrupted for id %d\n", quota_id);
 		}
 
-		/* truncate file */		
-		err = ftruncate(fd,  QF_OFF_UGID_BUF(q->path_len) +
+		/* truncate file */
+		err = ftruncate(fd, QF_OFF_UGID_BUF(q->path_len) +
 			q->ugid_stat.dquot_size * sizeof(struct ugid_obj));
 		if (err < 0) return err;
 	}
-	
+
 	/* compute and write checksum */
 	if (io_flags & IOF_CHKSUM) {
 		off_t fsize;
 		debug(LOG_DEBUG, "Writing quota file checksum\n");
-		
+
 		/* complete file with null checksum */
 		fsize = lseek(fd, 0, SEEK_END);
 		if (fsize <= 0) return EC_QUOTAFILE;
@@ -1732,7 +1732,7 @@ int write_quota_file(int fd, struct qf_data *q, int io_flags)
 		err = write_field(fd, &q->chksum, sizeof(q->chksum), fsize);
 		if (err < 0) return err;
 	}
-	
+
 	debug(LOG_DEBUG, "Quota file was written\n");
 	return 0;
 }

@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 	struct qf_data qd;
 	struct ugid_quota *q = NULL;
 	unsigned int ugid_quota_status = 0;
-	
+
 	parse_global_options(&argc, &argv, dump_usage);
 	argc += 1;
 	argv -= 1;
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 	init_quota_data(&qd);
 
 	if (!(option & FL_FORCE)) {
-		
+
 		/* dump from quota file */
 		fd = open_quota_file(quota_id, config_file, O_RDWR);
 		if (fd < 0) {
@@ -138,7 +138,7 @@ int main(int argc, char **argv)
 			for (i = 0; i < q->dquot_size; i++) {
 				dq = obj[i];
 				s = &(dq->obj.istat);
-	
+
 				/* id, type */
 				printf("%s\t%u\t%u",
 					UGID_LABEL,
@@ -152,13 +152,13 @@ int main(int argc, char **argv)
 						ker2block(s->qi_stat.bhardlimit),
 						s->qi_stat.isoftlimit,
 						s->qi_stat.ihardlimit);
-		
+
 				/* exp times */
 				if (option & FL_DUMP_EXPTIME)
 					printf("\t%lu\t%lu",
-						(s->qi_stat.bcurrent < s->qi_stat.bsoftlimit) ? 
+						(s->qi_stat.bcurrent < s->qi_stat.bsoftlimit) ?
 							0 : s->qi_stat.btime,
-						(s->qi_stat.icurrent < s->qi_stat.isoftlimit) ? 
+						(s->qi_stat.icurrent < s->qi_stat.isoftlimit) ?
 							0 : s->qi_stat.itime
 					);
 				printf("\n");

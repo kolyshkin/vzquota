@@ -41,14 +41,14 @@ long vzquotactl_syscall(
 	    cmd		: _cmd,
 	    quota_id	: _quota_id,
 	    qstat	: _qstat,
-	    ve_root	: (char *) _ve_root  
+	    ve_root	: (char *) _ve_root
 	};
 
 //	ASSERT(_qstat);
-	
+
 	debug(LOG_DEBUG, "vzquotactl ioctl start:cmd %d: id %d\n",
 		_cmd, _quota_id);
-	
+
 	fd = open(VZCTL_DEVICE, O_RDWR);
 	if (fd < 0)
 		error(EC_VZCALL, errno, "can't open vzctl device '%s'", VZCTL_DEVICE);
@@ -57,18 +57,18 @@ long vzquotactl_syscall(
 	rc = ioctl(fd, VZCTL_QUOTA_NEW_CTL, &qu);
 	debug(LOG_DEBUG, "vzquotactl ioctl end:cmd %d: id %d: status %d\n",
 		_cmd, _quota_id, rc);
-	
-	close(fd);	
+
+	close(fd);
 	return rc;
 }
 
 long vzquotactl_ugid_syscall(
-		int _cmd,                /* subcommand */
+		int _cmd,		 /* subcommand */
 		unsigned int _quota_id,  /* quota id where it applies to */
 		unsigned int _ugid_index,/* for reading statistic. index of first
 					    uid/gid record to read */
 		unsigned int _ugid_size, /* size of ugid_buf array */
-		void *_addr               /* user-level buffer */
+		void *_addr		 /* user-level buffer */
 		)
 {
 	int rc;
@@ -84,7 +84,7 @@ long vzquotactl_ugid_syscall(
 
 	debug(LOG_DEBUG, "vzquotaugidctl ioctl start:cmd %d: id %d\n",
 		_cmd, _quota_id);
-	
+
 	fd = open(VZCTL_DEVICE, O_RDWR);
 	if (fd < 0)
 		error(EC_VZCALL, errno, "can't open vzctl device '%s'", VZCTL_DEVICE);
@@ -93,8 +93,8 @@ long vzquotactl_ugid_syscall(
 
 	debug(LOG_DEBUG, "vzquotaugidctl ioctl end:cmd %d: id %d: status %d\n",
 		_cmd, _quota_id, rc);
-	
-	close(fd);	
+
+	close(fd);
 	return rc;
 }
 

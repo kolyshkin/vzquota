@@ -31,7 +31,7 @@ char *command_name = NULL; /* for usage() */
 
 char* globolize_path(char *path);
 
-static char usg[] = 
+static char usg[] =
 "Usage: %s [options] path\n"
 "\t-h\thelp\n"
 "\t-V\tversion info\n"
@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 	struct scan_info info;
 
 	parse_global_options(&argc, &argv, usg);
-	
+
 	mount_point = globolize_path(argv[0]);
 	info.ugid_stat = NULL;
 	scan(&info, mount_point);

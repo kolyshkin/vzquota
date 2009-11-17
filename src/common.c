@@ -111,7 +111,7 @@ void error(int status, int errnum, char *oformat, ...)
 {
 	if (oformat) {
 		va_list pvar;
-		
+
 		va_start(pvar, oformat);
 		vdebug_print(LOG_ERROR, oformat, pvar);
 		va_end(pvar);
@@ -260,7 +260,7 @@ static dq_time dq_t[] = {
 	{0, 0}
 };
 
-#define ASP_STR_LEN     256
+#define ASP_STR_LEN	256
 
 int str2time(char *s, long int *n)
 {
@@ -399,18 +399,18 @@ char* globolize_path(char *path)
 {
 	char *cwd = NULL;
 	char *newpath = NULL;
-		
+
 	ASSERT(path);
-			
+
 	if (path[0] == '/')
 		return xstrdup(path);
-						
+
 	if (!(cwd = getcwd(NULL, 0)))
 		error(EC_SYSTEM, errno, "getcwd");
-	
+
 	newpath = xmalloc(strlen(cwd) + strlen(path) + 2);
 	sprintf(newpath, "%s/%s", cwd, path);
-	
+
 	xfree(cwd);
 	return newpath;
 }
@@ -431,7 +431,7 @@ int parse_options(int argc, char **argv, char *short_options,
 	/* skip 'cmd' */
 	argc --;
 	argv ++;
-	
+
 	/* get VEID */
 	if (str2uint(argv[0], &quota_id) < 0)
 		usage(opt_usage);
@@ -460,7 +460,7 @@ int parse_options(int argc, char **argv, char *short_options,
 			}
 			option |= FL_SQT;
 			break;
-			
+
 		case 'u' :
 			if (cmd_type & PARSE_SETUGID) {
 				option |= FL_L2_USER;

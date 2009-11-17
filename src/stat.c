@@ -47,7 +47,7 @@ static struct option vestat_long_options[] = {
 	{"force",      no_argument, NULL, 'f'},
 	{0, 0, 0, 0}
 };
-	
+
 static char quotashow_short_options[] = "p:c:tR";
 static struct option quotashow_long_options[] = {
 	{"quota-file", required_argument, NULL, 'c'},
@@ -99,7 +99,7 @@ void print_status(struct qf_data *qd)
 		       b_overlim(s->bcurrent, s->bsoftlimit, s->bhardlimit),
 		       ker2block(s->bsoftlimit), ker2block(s->bhardlimit), buf);
 	}
-	
+
 	if (s->icurrent <= s->isoftlimit)
 		s->itime = 0;
 
@@ -108,7 +108,7 @@ void print_status(struct qf_data *qd)
 		printf("%14u %14u %14u %14lu %14lu\n",
 		      s->icurrent, s->isoftlimit, s->ihardlimit,
 		      s->itime, i->iexpire);
-	} else {	
+	} else {
 		difftime2str(s->itime, buf);
 		printf("%11s %14u%c %14u %14u %8s\n",
 		       "inodes", s->icurrent,
@@ -131,7 +131,7 @@ void print_ugid_status(struct qf_data *qd)
 	if (batch_mode) {
 		printf("%d %d\n", (option & FL_FORCE) ? -1
 		       : (qd->head.flags & QUOTA_UGID_ON) ? 1 : 0, (q->info.config.flags & VZDQUG_ON) ? 1 : 0);
-		/* ugid usage */		
+		/* ugid usage */
 		printf("%d %d %d\n", q->info.config.count, q->info.buf_size, q->info.config.limit);
 		printf("%d\n", (q->info.config.flags & VZDQUG_FIXED_SET) ? 1 : 0);
 	} else {
@@ -177,7 +177,7 @@ void print_ugid_status(struct qf_data *qd)
 	if (!q->dquot_size) return;
 
 	sort_dquot(q, obj);
-		
+
 	/* output ugid objects */
 	if (!batch_mode) {
 		printf("\n");
@@ -189,10 +189,10 @@ void print_ugid_status(struct qf_data *qd)
 		struct vz_quota_iface *s;
 		time_t t;
 		char status[256] = "";
-	 
-	   	dq = obj[i];
+
+		dq = obj[i];
 		s = &(dq->obj.istat);
-		
+
 		/* status */
 		if (batch_mode) {
 			sprintf(status, "%d %d", (dq->obj.flags & UGID_LOADED) ? 1 : 0,
@@ -204,7 +204,7 @@ void print_ugid_status(struct qf_data *qd)
 				sprintf(status, "%s%sdirty", status, (strlen(status)) ? "," : "");
 		}
 
-	  	/* blocks */	
+		/* blocks */
 		t = (s->qi_stat.bcurrent < s->qi_stat.bsoftlimit) ? 0 : s->qi_stat.btime;
 		if (batch_mode) {
 			sprintf(buf1, "%ld", t);
@@ -266,7 +266,7 @@ int vestat_proc(int argc, char **argv)
 			"try vzquota show id\n");
 
 	} else if (!(option & FL_FORCE)) {
-	   	if (write_quota_file(fd, &qd, IOF_ALL) < 0)
+		if (write_quota_file(fd, &qd, IOF_ALL) < 0)
 			exit(EC_QUOTAFILE);
 		close_quota_file(fd);
 	}
@@ -279,7 +279,7 @@ int vestat_proc(int argc, char **argv)
 		if (!(qd.ugid_stat.info.config.flags & VZDQUG_ON))
 			rc = EC_UG_NOTRUN;
 	}
-	
+
 	free_quota_data(&qd);
 
 	/* indicate that VE and user/group quotas are on */

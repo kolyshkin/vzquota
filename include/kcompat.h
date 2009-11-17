@@ -15,7 +15,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
- 
+
 #ifndef __KCOMPAT_H__
 #define __KCOMPAT_H__
 
@@ -24,8 +24,8 @@
  */
 #ifndef Q_SETGRACE
 
-#define Q_SETGRACE 0x0B00       /* set inode and block grace */
-#define Q_SETQLIM  0x0700       /* set limits */
+#define Q_SETGRACE	0x0B00	/* set inode and block grace */
+#define Q_SETQLIM	0x0700	/* set limits */
 
 
 /* This is in-memory copy of quota block. See meaning of entries above */
