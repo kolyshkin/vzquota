@@ -170,16 +170,16 @@ void free_lists(struct scan_info *info)
 
 void scan(struct scan_info *info, const char *mnt)
 {
-	char *pwd_path = NULL;
 	struct stat root_st;
 	struct ugid_quota *ugid_stat = info->ugid_stat;
+	int cwd;
 
 	ASSERT(info && mnt);
 
 	debug(LOG_INFO, "scan mount point begin '%s'\n", mnt);
 
-	if (!(pwd_path = getcwd(NULL, 0)))
-		error(EC_SYSTEM,errno,"quota check : getcwd");
+	if ((cwd = open(".", O_RDONLY)) == -1)
+		error(0, errno, "failed to open cwd");
 
 	memset(info, 0, sizeof(struct scan_info));
 	if (ugid_stat) {
@@ -214,10 +214,11 @@ void scan(struct scan_info *info, const char *mnt)
 		/* update size of buffer */
 		info->ugid_stat->info.buf_size = info->ugid_stat->dquot_size;
 	}
-	if (chdir(pwd_path) < 0)
-		error(EC_SYSTEM,errno,"quota check : chdir '%s'", pwd_path);
+	if (cwd != -1) {
+		fchdir(cwd);
+		close(cwd);
+	}
 
-	xfree(pwd_path);
 	free_lists(info);
 
 	debug(LOG_INFO,
