@@ -1287,7 +1287,7 @@ char *get_quota_file_name(unsigned int quota_id, char *buf, int bufsize,
 		}
 		/* Fall through ... */
 	default:
-		error(EC_QUOTAFILE, errno,
+		error(EC_NOQUOTAFILE, errno,
 			"can't open quota config file %s\n", name);
 	}
 
