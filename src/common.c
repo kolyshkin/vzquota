@@ -560,6 +560,12 @@ int parse_options(int argc, char **argv, char *short_options,
 	return optind;
 }
 
+static void print_version()
+{
+	printf("Vzquota version %s\n", VZQUOTA_VERSION);
+	exit(EC_SUCCESS);
+}
+
 /*pointers to argc and argv of main()*/
 void parse_global_options(int *argc, char ***argv, const char *usg)
 {
@@ -587,7 +593,7 @@ void parse_global_options(int *argc, char ***argv, const char *usg)
 			help = 1;
 			break;
 		case 'V':
-			version();
+			print_version();
 			break;
 		case 'v':
 			debug_level++;
@@ -611,12 +617,6 @@ void parse_global_options(int *argc, char ***argv, const char *usg)
 
 	if (help)
 		*argc = -1;
-}
-
-void version()
-{
-	printf("Vzquota version %s\n", VZQUOTA_VERSION);
-	exit(EC_SUCCESS);
 }
 
 void usage(const char *usg)

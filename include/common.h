@@ -187,7 +187,6 @@ int parse_options(int argc, char **argv, char *short_options,
 
 /*pointers to argc and argv of main()*/
 void parse_global_options(int *argc, char ***argv, const char *usg);
-void version();
 void usage(const char *usg);
 
 typedef void (*func_cleaner_t) (void * data);
