@@ -514,6 +514,9 @@ static void error_quotaon(struct qf_data *qd, int err, char *buf)
 			if (strlen(buf) > getpagesize() - 2)
 				error(0, 0, "\t... more files found");
 		}
+	} else if (err == EEXIST) {
+		error(0, 0, "\tAnother quota is already running "
+				"for this partition.");
 	}
 
 	/* exit with error status */
