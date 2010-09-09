@@ -24,7 +24,7 @@ NAMEVER=$(NAME)-$(VERSION)
 TARBALL=$(NAMEVER).tar.bz2
 
 all install depend clean:
-	cd $(SRCDIR) && $(MAKE) -f Makefile $@
+	$(MAKE) -C $(SRCDIR) $@
 
 clean-all: clean
 	rm -f $(TARBALL)
