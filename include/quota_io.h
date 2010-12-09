@@ -103,12 +103,13 @@ struct qf_data {
 };
 
 #define IOF_ALL		0xFFFFFFFF
-#define IOF_HEAD	1
-#define IOF_STAT	2
-#define IOF_PATH	4
-#define IOF_UGID_INFO	8
-#define IOF_UGID_BUF	16
-#define IOF_CHKSUM	32
+#define IOF_HEAD	0x01
+#define IOF_STAT	0x02
+#define IOF_PATH	0x04
+#define IOF_UGID_INFO	0x08
+#define IOF_UGID_BUF	0x10
+#define IOF_CHKSUM	0x20
+#define IOF_UGID_FLAGS	0x40
 
 
 /* buffer size in bytes for ugid objects read/write operaitons and syscalls */
