@@ -752,7 +752,7 @@ int quota_syscall_off(struct qf_data *qd)
 		 * If this is the last chance to disable quota, allocate memory buffer
 		 * and ask kernel to find currently used files.
 		 */
-		if (retry == MAX_RETRY && debug_level >= LOG_INFO) {
+		if (retry == MAX_RETRY && debug_level >= LOG_WARNING) {
 			buf = (char *)malloc(getpagesize());
 			*buf = '\0';
 		}
