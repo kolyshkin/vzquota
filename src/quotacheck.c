@@ -31,14 +31,14 @@
 #include "quotacheck.h"
 
 
-inline struct dir * new_dir_entry(const char * item_name)
+static inline struct dir * new_dir_entry(const char * item_name)
 {
 	struct dir * new_dir = xmalloc(sizeof(struct dir));
 	new_dir->name = xstrdup(item_name);
 	return new_dir;
 }
 
-inline void insert_dir_entry(struct dir * ind, struct dir * entry)
+static inline void insert_dir_entry(struct dir * ind, struct dir * entry)
 {
 	entry->next = ind->next;
 	ind->next = entry;

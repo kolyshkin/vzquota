@@ -39,7 +39,7 @@
 
 #define min(a,b)	(((a) > (b)) ? (b) : (a))
 
-inline int is_dummy_stat(struct dq_stat *stat)
+static inline int is_dummy_stat(struct dq_stat *stat)
 {
 	return !(stat->bhardlimit || stat->bsoftlimit || stat->bcurrent ||
 		stat->ihardlimit || stat->isoftlimit || stat->icurrent);
@@ -48,13 +48,13 @@ inline int is_dummy_stat(struct dq_stat *stat)
 static char quotanames[MAXQUOTAS + 1][20] = QUOTANAMES;
 
 /* Convert type of quota to written representation */
-inline char *type2name(int type)
+char *type2name(int type)
 {
 	return quotanames[type];
 }
 
 /* Hash given id */
-inline unsigned int hash_dquot(unsigned int id)
+static inline unsigned int hash_dquot(unsigned int id)
 {
 	return ((id ^ (id << 16)) * 997) & (DQUOTHASHSIZE - 1);
 }
