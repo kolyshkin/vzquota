@@ -1,11 +1,13 @@
 .TH vzdqcheck 8 "Mar 06, 2008" "Virtuozzo/OpenVZ" "Containers"
 .SH NAME
-\fBvzdqcheck\fR \- counts disk usage
+vzdqcheck \- count disk usage
 .SH SYNOPSIS
-.TP
-\fBvzdqcheck\fP [\fIoption\fP ...] \fIpath\fP
+.SY vzdqcheck
+[\fIoption\fP ...] \fIpath\fP
+.YS
 .SH DESCRIPTION
-\fBvzdqcheck\fP summarize disk usage of all files under the \fIpath\fP.
+\fBvzdqcheck\fP scans all the files under the \fIpath\fP, using the same
+code as \fBvzquota init\fR, and reports disk usage (in 1 KB blocks and inodes).
 .SH OPTIONS
 .TP
 .B -h
@@ -21,5 +23,9 @@ Only fatal errors are displayed.
 .B -v
 Verbose mode. Causes the utility to print debugging messages about its
 progress. Multiple \fB-v\fP options increase verbosity. Maximum is 2.
+
+.SH SEE ALSO
+.BR vzquota (8).
+
 .SH COPYRIGHT
 Copyright (C) 2000-2008, Parallels, Inc. Licensed under GNU GPL.

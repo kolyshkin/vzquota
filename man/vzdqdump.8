@@ -1,14 +1,18 @@
 .TH vzdqdump 8 "Mar 06, 2008" "Virtuozzo/OpenVZ" "Containers"
 
 .SH NAME
-\fBvzdqdump\fR, \fBvzdqload\fR \- dump, load user/group quotas
+vzdqdump, vzdqload \- dump, load user/group quotas
 .SH SYNOPSIS
-.TP
-\fBvzdqdump\fP [\fIgeneral_options\fP] \fIquota_id\fP [\fB-f\fR]
-[\fB-c\fR \fIquota_file\fR] { [\fB-G\fR] [\fB-U\fR] [\fB-T\fR] }
-.TP
-\fBvzdqload\fP [\fIgeneral_options\fP] \fIquota_id\fP
-[\fB-c\fR \fIquota_file\fR] { [\fB-G\fR] [\fB-U\fR] [\fB-T\fR] }
+.SY vzdqdump
+[\fIgeneral_options\fP] \fIquota_id\fP
+.OP -f
+.OP -c quota_file
+\fB-G\fR | \fB-U\fR | \fB-T\fR
+.SY vzdqload
+[\fIgeneral_options\fP] \fIquota_id\fP
+.OP -c quota_file
+\fB-G\fR | \fB-U\fR | \fB-T\fR
+.YS
 
 .SH DESCRIPTION
 \fBvzdqdump\fP dumps user/group quota information obtained either
@@ -17,7 +21,7 @@ from a quota file or the kernel to stdout.
 \fBvzdqload\fP loads user/group quota information provided by
 \fBvzdqdump\fP from stdin into quota file. Quota must be stopped at load.
 
-The \fBquota_id\fP must be numeric-only identifier. Note, that quota ID is
+The \fIquota_id\fP must be numeric-only identifier. Note that quota ID is
 not the same as container ID (CTID). One container can mount several
 filesystems and each of them can have its own quotas.
 
@@ -39,24 +43,26 @@ Verbose mode. Causes the utilities to print debugging messages about their
 progress. Multiple \fB-v\fP options increase verbosity. Maximum is 2.
 .SS Parameters
 .TP
-\fB\-f\fP
+.B -f
 Dump user/group quota information from kernel rather than quota file.
 .TP
-\fB\-c\fP \fIquota_file\fP
+.BI -c \ quota_file
 Specifies quota file to process.
 .TP
-\fB\-G\fR, \fB--grace\fP
+.BR -G ,\  --grace
 Dump (load) user/group grace times.
 .TP
-\fB\-U\fR, \fB--limits\fP
+.BR -U ,\  --limits
 Dump (load) disk limits of users/groups.
 .TP
-\fB\-T\fR, \fB--exptimes\fP
+.BR -T ,\  --exptimes
 Dump (load) expiration times of users/groups.
 
 .SH DIAGNOSTICS
-.TP
-See \fBvzquota\fP(8)
+See \fBvzquota\fP(8).
+
+.SH SEE ALSO
+.BR vzquota (8).
 
 .SH COPYRIGHT
 Copyright (C) 2000-2008, Parallels, Inc. Licensed under GNU GPL.
