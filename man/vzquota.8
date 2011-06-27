@@ -21,7 +21,9 @@ each of them can have its own quotas.
 Argument \fIcommand\fR can be one of the following:
 \fBinit\fP, \fBdrop\fP, \fBon\fP, \fBoff\fP, \fBsetlimit\fP, \fBsetlimit2\fP,
 \fBstat\fP, \fBshow\fP.
+
 .SS General
+
 .TP
 .B -h
 Print usage information.
@@ -40,7 +42,9 @@ progress. Multiple \fB-v\fP options increase verbosity. Maximum is 2.
 .B -b
 Batch mode. in this mode outputs (usually on \fBstat\fP and \fBshow\fP
 commands) will be in format better suitable for parsing by a script.
+
 .SS Quota Commands
+
 The following commands are available:
 .TP
 .B init
@@ -99,9 +103,9 @@ backup purposes.
 .B show
 Show usage and limits info from quota file. Option \fB-t\fP specifies to show
 user/group quota information as well.
-.SS Quota Command Options
-.B Quota limits and flags.
-.br
+
+.SS Setting quota limits
+
 All these options are required in \fBinit\fP command, and optionally
 accepted in \fBon\fP and \fBsetlimit\fP commands.
 .TP
@@ -164,9 +168,8 @@ Disk quota inode hard limit.
 .TP
 \fB\-n\fR, \fB--inode\-exptime\fP \fIiet\fP
 Disk quota expiration time for excess of a inode soft limit.
-.TP
-.B Quota options.
-.br
+
+.SS Other options
 .TP
 .BI \-p\  path
 Point of quota accounting for given \fIquota_id\fP. This option required for
