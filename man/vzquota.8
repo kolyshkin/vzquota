@@ -210,33 +210,51 @@ given by \fB-p\fP option is busy. This is rather limitation of kernel
 part of disk quota implementation.
 .SH DISPLAY
 \fBvzquota stat\fP and \fBvzquota show\fP display the following information:
-.PP
-\fBresource\fP - 1k-blocks or inodes.
-
-\fBusage\fP - current usage of resource.
-
-\fBsoftlimit\fP - resource limit. Current usage can exceed this limit up to hard limit during grace time.
-
-\fBhardlimit\fP - resource limit. Current usage can't exceed this limit.
-
-\fBgrace\fP - during this amount of time usage can exceed softlimit. If
+.TP
+.B resource
+Either 1k-blocks or inodes.
+.TP
+.B usage
+Current usage of resource.
+.TP
+.B softlimit
+Resource limit. Current usage can exceed this limit up to hard limit during grace time.
+.TP
+.B hardlimit
+Resource limit. Current usage can't exceed this limit.
+.TP
+.B grace
+During this amount of time usage can exceed softlimit. If
 a soft limit has not been exceeded the grace column is blank. If the grace
 period has expired, the grace column contain special \fBnone\fP value.
-
-If \fB\-t\fP is specified the following information is displayed also:
-
-\fBUser/group quota\fP - on|off, active|inactive. Status of the 2nd level quota.
-on|off defines the state of the 2nd level quota at the next start of
-container quota.
-active|inactive indicates the current state of the 2nd level quota in kernel.
-
-\fBUgids\fP - \fIloaded\fP, \fItotal\fP and \fIlimit\fP. \fIloaded\fP is number of records (uids or gids) in kernel. \fItotal\fP is number of unique records located in the kernel and quota file. \fIlimit\fP is current kernel limits of records amount. \fIloaded\fP and \fItotal\fP may be greater then \fIlimit\fP.
-
-\fBUgid limit was exceeded\fP - yes or no. \fIYes\fP indicates that vzquota did not loaded all records in kernel. In this case you should reduce number of unique records (remove files which belong to unnecessary users) or increase \fIlimit\fP. After that you should restart quota.
-
-\fBUser/group grace times and quotafile flags\fP - during grace time usage can
-exceed softlimit. Quotafile flags are internal parameters of standard linux
-kernel quota v.3.
+.PP
+In case option \fB\-t\fP is specified, the following information is
+also displayed:
+.TP
+.B User/group quota:
+Status of the 2nd level quota. This can be \fBon\fR or \fBoff\fR,
+\fBactive\fR or \fBinactive\fR. Values \fBon\fR/\fBoff\fR define the state
+of the 2nd level quota at the next start of container quota.
+Values \fBactive\fR/\fBinactive\fR indicate the current state
+of the 2nd level quota in the kernel.
+.TP
+.B Ugids:
+Three values are shown: \fIloaded\fP, \fItotal\fP and \fIlimit\fP.
+\fIloaded\fP is the number of records (uids or gids) in the kernel.
+\fItotal\fP is the number of unique records located in the kernel
+and quota file.
+\fIlimit\fP is the current kernel limit of records amount.
+Note that \fIloaded\fP and \fItotal\fP may be greater then \fIlimit\fP.
+.TP
+.B Ugid limit was exceeded:
+Can be \fByes\fR or \fBno\fR. \fByes\fP indicates that vzquota did not loaded
+all records into the kernel. In this case you should reduce the number
+of unique records (remove files which belong to unnecessary users)
+or increase the ugid limit. After that you should restart quota.
+.TP
+.B User/group grace times and quotafile flags:
+Grace times and quota file flags (internal parameters of standard linux kernel
+quota v.3).
 
 .SH EXIT STATUS
 .TP
