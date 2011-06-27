@@ -43,7 +43,7 @@ commands) will be in format better suitable for parsing by a script.
 .SS Quota Commands
 The following commands are available:
 .TP
-\fBinit\fP
+.B init
 A necessary preliminary for any other quota command work: create a new
 quota file, calculating current disk usage from given path.
 This command requires full set of quota soft- and hardlimits given
@@ -59,36 +59,36 @@ instead of \fB-c\fP option, to set relative quota file location. In this case
 quota file resides one dirrectory upper than quota accounting point and has
 special name (see below).
 .TP
-\fBdrop\fP
+.B drop
 Remove quota file. Command checks if quota is running and refuses to remove
 file in this case, option \fB-f\fP allows to override that rule.
 .TP
-\fBon\fP
+.B on
 Turn quota on. If previous quota session wasn't switched off properly
 (quota is not running, but quota file indicates it is),
 initialization procedure will be performed. \fB-f\fP option allow to force
 initialization procedure regardless of the shutdown status. Command \fBon\fP
 doesn't work in case specified quota id is running.
 .TP
-\fBoff\fP
+.B off
 Turn quota off, write usage statistic back to the quota file. Doesn't work
 if quota file cannot be accessed, also accepts \fB-f\fP option
 (force switching off, even if usage statistic will be lost). This is possible
 that quota will still be in a stopped state, even if \fB-f\fP flag is used.
 .TP
-\fBsetlimit\fP
+.B setlimit
 Set new quota parameters. Requires at least one quota parameter or flag
 specified. Applies new parameters immediately if quota with given quota_id
 is running. Stores new limits and flags in the quota file. Option \fB-f\fP
 specifies to mark quota as dirty, so at the next quota start, disk
 will be rescanned and usage updated.
 .TP
-\fBsetlimit2\fP
+.B setlimit2
 Set second-level quota parameters. Applies new parameters immediately
 if quota with given quota_id is running and second-level quota is
 on. Stores new limits in the quota file.
 .TP
-\fBstat\fP
+.B stat
 Show usage statistics and update it in quota file. Option \fB-f\fP causes to
 do not read and update quota file, just print statistics from kernel.
 Option \fB-t\fP specifies to show and update user/group based quota statistics
@@ -96,7 +96,7 @@ for a container. Works on running containers only. The command with \fB-t\fP
 option flushes all quota statistics from kernel to file and thus may be used for
 backup purposes.
 .TP
-\fBshow\fP
+.B show
 Show usage and limits info from quota file. Option \fB-t\fP specifies to show
 user/group quota information as well.
 .SS Quota Command Options
@@ -105,17 +105,17 @@ user/group quota information as well.
 All these options are required in \fBinit\fP command, and optionally
 accepted in \fBon\fP and \fBsetlimit\fP commands.
 .TP
-\fB\-s\fR, \fB--sub\-quotas\fP \fB1\fI|\fB0\fP
+.BR \-s ,\  --sub\-quotas\ 1 | 0
 Enables or disables user/group based quota inside the container. Here \fB1\fP
 means to enable, and \fB0\fP - to disable.
 By default user/group quota is disabled. This option is accepted by
 \fBinit\fP and \fBon\fP commands.
 .TP
-\fB\-u\fP \fIuser_id\fR
+.BI \-u\  user_id
 For \fBsetlimit2\fP command only. Limits will be applied to the specified
 \fIuser_id\fP.
 .TP
-\fB\-g\fP \fIgroup_id\fR
+.BI \-g\  group_id
 For \fBsetlimit2\fP command only. Limits will be applied to the specified
 \fIgroup_id\fP.
 .TP
@@ -168,14 +168,14 @@ Disk quota expiration time for excess of a inode soft limit.
 .B Quota options.
 .br
 .TP
-\fB\-p\fP \fIpath\fP
+.BI \-p\  path
 Point of quota accounting for given \fIquota_id\fP. This option required for
 \fBinit\fP command and can be used also with any another command to override
 quota path obtained from quota file. For \fBon\fP and \fBsetlimit\fP commands,
 this option can be used to set and save new quota accounting path for given
 \fIquota_id\fP
 .TP
-\fB\-R\fP
+.B \-R
 Set special relative path to \fIquota_file\fR. If this option is specified,
 quota file location will depends on path to quota accounting dir: if your quota
 accounting path is /path/to/\fIsomewhere\fR/ than quota file will be
@@ -183,23 +183,23 @@ accounting path is /path/to/\fIsomewhere\fR/ than quota file will be
 location is /var/vzquota/quota.\fIquota_id\fP. All commands accept this
 option.
 .TP
-\fB\-c\fP \fIquota_file\fP
+.BI \-c\  quota_file
 This option allows to specify a \fIquota_file\fR to work with.
 All commands accept this option. If this option is not specified, default
 file location depends on whether \fB-R\fP option is specified or not
 (see above).
 .TP
-\fB\-f\fP
+.B \-f
 Force option. Accepted by \fBdrop\fP, \fBon\fP, \fBoff\fP, \fBstat\fP,
 \fBsetlimit\fP and \fBsetlimit2\fR commands. Action of this option differs
 for different commands and is described above for each command separately.
 .TP
-\fB\-t\fP
+.B \-t
 For \fBstat\fP and \fBshow\fP commands only. Processes user/group quota
 statistics. Specifies whether to show (update in file) user/group
 quota information.
 .TP
-\fB\-t\fP
+.B \-t
 For \fBsetlimit2\fP command. Set second-level quota time grace parameters.
 .SH LIMITATIONS
 It is impossible to start or stop quota accounting if the directory
