@@ -14,13 +14,14 @@ vzquota \- manipulate containers disk quotas
 \fBvzquota\fP controls disk quotas for Virtuozzo/OpenVZ container.
 These are per-container disk quotas set from Virtuozzo/OpenVZ host system.
 
-The \fBquota_id\fP must be numeric-only identifier. Note, that quota ID is not
-the same as container ID (CTID). One container can mount several filesystems and
-each of them can have its own quotas.
-.SH OPTIONS
-Argument \fIcommand\fR can be one of the following:
+The \fIcommand\fR can be one of the following:
 \fBinit\fP, \fBdrop\fP, \fBon\fP, \fBoff\fP, \fBsetlimit\fP, \fBsetlimit2\fP,
 \fBstat\fP, \fBshow\fP.
+
+The \fIquota_id\fP must be numeric-only identifier. Note, that quota ID is not
+the same as container ID (CTID). One container can mount several filesystems
+and each of them can have its own quotas.
+.SH OPTIONS
 
 .SS General
 
