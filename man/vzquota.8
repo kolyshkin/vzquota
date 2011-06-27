@@ -47,24 +47,24 @@ The following commands are available:
 A necessary preliminary for any other quota command work: create a new
 quota file, calculating current disk usage from given path.
 This command requires full set of quota soft- and hardlimits given
-as command-line options. Limits are also stored in quota file, so 
+as command-line options. Limits are also stored in quota file, so
 subsequent \fBvzquota on\fP doesn't requires any quota limit as
 command-line parameter, although accepts them as well. New specified
 limits and flags will also be stored in the quota file.
 
 You can also create your own quota files for arbitrary quota accounting points.
 Quota file location and path to quota accounting point can be specified via
-\fB-c\fP and \fB-p\fP options (see below). You can use also \fB-R\fP option 
+\fB-c\fP and \fB-p\fP options (see below). You can use also \fB-R\fP option
 instead of \fB-c\fP option, to set relative quota file location. In this case
 quota file resides one dirrectory upper than quota accounting point and has
 special name (see below).
 .TP
 \fBdrop\fP
 Remove quota file. Command checks if quota is running and refuses to remove
-file in this case, option \fB-f\fP allows to override that rule. 
+file in this case, option \fB-f\fP allows to override that rule.
 .TP
 \fBon\fP
-Turn quota on. If previous quota session wasn't switched off properly 
+Turn quota on. If previous quota session wasn't switched off properly
 (quota is not running, but quota file indicates it is),
 initialization procedure will be performed. \fB-f\fP option allow to force
 initialization procedure regardless of the shutdown status. Command \fBon\fP
@@ -72,7 +72,7 @@ doesn't work in case specified quota id is running.
 .TP
 \fBoff\fP
 Turn quota off, write usage statistic back to the quota file. Doesn't work
-if quota file cannot be accessed, also accepts \fB-f\fP option 
+if quota file cannot be accessed, also accepts \fB-f\fP option
 (force switching off, even if usage statistic will be lost). This is possible
 that quota will still be in a stopped state, even if \fB-f\fP flag is used.
 .TP
@@ -102,7 +102,7 @@ user/group quota information as well.
 .SS Quota Command Options
 .B Quota limits and flags.
 .br
-All these options are required in \fBinit\fP command, and optionally 
+All these options are required in \fBinit\fP command, and optionally
 accepted in \fBon\fP and \fBsetlimit\fP commands.
 .TP
 \fB\-s\fR, \fB--sub\-quotas\fP \fB1\fI|\fB0\fP
@@ -133,7 +133,7 @@ file but this change does not take immediate effect. Modification will be
 applied after quota restart.
 .TP
 \fB\-b\fR, \fB--block\-softlimit\fP \fIbsl\fP
-Disk quota block soft limit. 
+Disk quota block soft limit.
 Soft limit is amount of blocks which excess is allowed in time equal
 \fIexptime\fP.
 On the expiration of this time soft limit becomes hard limit.
@@ -178,7 +178,7 @@ this option can be used to set and save new quota accounting path for given
 \fB\-R\fP
 Set special relative path to \fIquota_file\fR. If this option is specified,
 quota file location will depends on path to quota accounting dir: if your quota
-accounting path is /path/to/\fIsomewhere\fR/ than quota file will be 
+accounting path is /path/to/\fIsomewhere\fR/ than quota file will be
 /path/to/quota.\fIsomewhere\fR. If this option is not specified, quota file
 location is /var/vzquota/quota.\fIquota_id\fP. All commands accept this
 option.
