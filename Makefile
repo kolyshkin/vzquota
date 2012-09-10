@@ -31,7 +31,9 @@ all install depend clean:
 clean-all: clean
 	rm -f $(TARBALL)
 
+dist: tar
 tar: $(TARBALL)
+.PHONY: dist tar
 
 $(TARBALL): clean-all
 	rm -f ../$(NAMEVER)
