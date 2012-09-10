@@ -215,7 +215,8 @@ void scan(struct scan_info *info, const char *mnt)
 		info->ugid_stat->info.buf_size = info->ugid_stat->dquot_size;
 	}
 	if (cwd != -1) {
-		fchdir(cwd);
+		if (fchdir(cwd))
+			error(0, errno, "failed to fchdir cwd");
 		close(cwd);
 	}
 
