@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2000-2008, Parallels, Inc. All rights reserved.
+ *  Copyright (C) 2000-2012, Parallels, Inc. All rights reserved.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -80,35 +80,30 @@ void print_status(struct qf_data *qd)
 	struct dq_stat *s = &(stat->dq_stat);
 	struct dq_info *i = &(stat->dq_info);
 
-	if (!batch_mode)
-		printf("%11s %14s  %14s %14s %8s\n",
-		       "resource", "usage", "softlimit", "hardlimit", "grace");
-
 	if (s->bcurrent <= s->bsoftlimit)
 		s->btime = 0;
+	if (s->icurrent <= s->isoftlimit)
+		s->itime = 0;
 
 	if (batch_mode) {
 		/* usage soft hard grace expire */
 		printf("%14llu %14llu %14llu %14lu %14lu\n",
 		      ker2block(s->bcurrent), ker2block(s->bsoftlimit), ker2block(s->bhardlimit),
 		      s->btime, i->bexpire);
+		/* usage soft hard grace expire */
+		printf("%14u %14u %14u %14lu %14lu\n",
+		      s->icurrent, s->isoftlimit, s->ihardlimit,
+		      s->itime, i->iexpire);
+
 	} else {
+		printf("%11s %14s  %14s %14s %8s\n",
+		       "resource", "usage", "softlimit", "hardlimit", "grace");
 		difftime2str(s->btime, buf);
 		printf("%11s %14llu%c %14llu %14llu %8s\n",
 		       "1k-blocks", ker2block(s->bcurrent),
 		       b_overlim(s->bcurrent, s->bsoftlimit, s->bhardlimit),
 		       ker2block(s->bsoftlimit), ker2block(s->bhardlimit), buf);
-	}
 
-	if (s->icurrent <= s->isoftlimit)
-		s->itime = 0;
-
-	if (batch_mode) {
-		/* usage soft hard grace expire */
-		printf("%14u %14u %14u %14lu %14lu\n",
-		      s->icurrent, s->isoftlimit, s->ihardlimit,
-		      s->itime, i->iexpire);
-	} else {
 		difftime2str(s->itime, buf);
 		printf("%11s %14u%c %14u %14u %8s\n",
 		       "inodes", s->icurrent,
