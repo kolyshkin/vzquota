@@ -34,7 +34,7 @@ char *command_name = NULL; /* for usage() */
 
 static char dump_usage[] =
 "Usage: %s quotaid [-c file] commands\n"
-"Loads user/group qouta information from stdin into quota file.\n"
+"Loads user/group quota information from stdin into quota file.\n"
 "\t-c file\tuse given quota file\n"
 "Commands specify what user/group information to load:\n"
 "\t-G\tgrace time\n"

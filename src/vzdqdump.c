@@ -32,7 +32,7 @@ char *command_name = NULL; /* for usage() */
 
 static char dump_usage[] =
 "Usage: %s quotaid [-c file] [-f] commands\n"
-"Dumps user/group qouta information from quota file.\n"
+"Dumps user/group quota information from quota file.\n"
 "\t-c file\tuse given quota file\n"
 "\t-f\tdump data from kernel rather than quota file\n"
 "Commands specify what user/group information to dump:\n"
