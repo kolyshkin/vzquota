@@ -19,7 +19,6 @@ INSTALL = install
 PREFIX = /usr
 SBINDIR = ${PREFIX}/sbin
 VARDIR = /var
-MANDIR = ${PREFIX}/share/man
 
 #DEBUG = -D_DEBUG -g3 -ggdb3 -p -pg
 CFLAGS += -pipe -I../include -std=gnu99 \
@@ -43,7 +42,6 @@ OBJS_load = common.o quota_io.o syscall.o \
 
 OBJS=$(OBJS_main) $(OBJS_check) $(OBJS_dump) $(OBJS_load)
 PROGS=vzquota vzdqcheck vzdqdump vzdqload
-MANS=vzquota.8 vzdqcheck.8 vzdqdump.8
 
 all: $(PROGS)
 
@@ -60,11 +58,6 @@ install: $(PROGS)
 	for file in $(PROGS); do \
 		$(INSTALL) -m 755 $$file $(DESTDIR)$(SBINDIR)/$$file; \
 	done
-	for file in $(MANS); do \
-		$(INSTALL) -m 644 ../man/$$file $(DESTDIR)$(MANDIR)/man8/$$file; \
-	done
-	cd $(DESTDIR)$(MANDIR)/man8; ext=`ls vzdqdump.8*`; ext=$${ext#*.}; \
-	ln -fs vzdqdump.$$ext vzdqload.$$ext; chmod 644 vzdqload.$$ext; cd -
 
 clean:
 	rm -f $(OBJS) $(PROGS) .depend core *.log

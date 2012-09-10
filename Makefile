@@ -15,7 +15,7 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-SRCDIR=src
+SUBDIRS=src man
 NAME=vzquota
 SPEC=$(NAME).spec
 VERSION=$(shell awk '/^Version:/{print $$2}' $(SPEC))
@@ -24,7 +24,9 @@ NAMEVER=$(NAME)-$(VERSION)
 TARBALL=$(NAMEVER).tar.bz2
 
 all install depend clean:
-	$(MAKE) -C $(SRCDIR) $@
+	@set -e; \
+	for d in $(SUBDIRS); do $(MAKE) -C $$d $@; done
+.PHONY: all install depend clean
 
 clean-all: clean
 	rm -f $(TARBALL)
