@@ -49,6 +49,7 @@ struct scan_info {
 	struct dir *dir_stack;
 	struct hardlink *links_hash[HASHSIZE];
 	struct ugid_quota *ugid_stat;
+	int (*sync_fd)(int fd);
 };
 
 void scan(struct scan_info *info, const char *mnt);

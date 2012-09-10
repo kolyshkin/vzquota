@@ -18,18 +18,27 @@
 
 #include <dirent.h>
 #include <sys/stat.h>
+#include <sys/vfs.h>
 #include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
+#include <linux/magic.h>
 
 #include "vzquota.h"
 #include "common.h"
 #include "quota_io.h"
 #include "quotacheck.h"
 
+/* From ext4.h */
+#define EXT4_IOC_ALLOC_DA_BLKS		_IO('f', 12)
+static int ext4_sync_fd(int fd)
+{
+	/* Force block allocation */
+	return ioctl(fd, EXT4_IOC_ALLOC_DA_BLKS);
+}
 
 static inline struct dir * new_dir_entry(const char * item_name)
 {
@@ -47,9 +56,11 @@ static inline void insert_dir_entry(struct dir * ind, struct dir * entry)
 void scan_dir(struct scan_info *info, dev_t root_dev);
 
 /* in bytes! */
-static loff_t get_inode_size(const char* fname, struct stat *st)
+static loff_t get_inode_size(struct scan_info *info, const char* fname,
+			     struct stat *st)
 {
 	static int ioctl_fail_warn;
+	static int sync_fd_warn;
 	int fd;
 	loff_t size;
 
@@ -61,6 +72,13 @@ static loff_t get_inode_size(const char* fname, struct stat *st)
 	fd = open(fname, O_RDONLY);
 	if (fd < 0)
 		error(EC_SYSTEM, errno, "Quota check : open '%s'", fname);
+	if (info->sync_fd && info->sync_fd(fd) != 0)
+		if (!sync_fd_warn)
+		{
+			sync_fd_warn = 1;
+			debug(LOG_WARNING, "Cannot sync file."
+			      " Results might be inaccurate.\n");
+		}
 
 	if (ioctl(fd, FIOQSIZE, &size) < 0)
 	{
@@ -121,7 +139,7 @@ static void add_quota_item(struct scan_info *info, const char * item_name, int r
 		if (check_hard_link(info, st.st_ino))
 			return;
 
-	space = get_inode_size(item_name, &st);
+	space = get_inode_size(info, item_name, &st);
 /*	debug(LOG_DEBUG, "get size for %s: %llu\n", item_name, space);*/
 
 	qspace = space;
@@ -171,6 +189,7 @@ void free_lists(struct scan_info *info)
 void scan(struct scan_info *info, const char *mnt)
 {
 	struct stat root_st;
+	struct statfs root_stfs;
 	struct ugid_quota *ugid_stat = info->ugid_stat;
 	int cwd;
 
@@ -192,7 +211,20 @@ void scan(struct scan_info *info, const char *mnt)
 	if (!S_ISDIR(root_st.st_mode))
 		error(EC_SYSTEM, errno, "quota check : path %s is not dir", 
 				mnt);
-
+	if (statfs(mnt, &root_stfs) == -1)
+		error(EC_SYSTEM, errno, "quota check : statfs %s", mnt);
+	if (root_stfs.f_type == EXT4_SUPER_MAGIC) {
+		DIR *dp = opendir(mnt);
+		int dfd;
+		if (dp == (DIR *) NULL)
+			error(EC_SYSTEM, errno, "quota check : opendir '%s'", mnt);
+		dfd = dirfd(dp);
+		if (dfd < 0)
+			error(EC_SYSTEM, errno, "quota check : dirfd '%s'", mnt);
+		if (ext4_sync_fd(dfd) != -1)
+			info->sync_fd = ext4_sync_fd;
+		closedir(dp);
+	}
 	add_quota_item(info, mnt, 1, root_st.st_dev);
 
 	while (info->dir_stack != (struct dir *) NULL) {

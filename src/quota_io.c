@@ -1456,6 +1456,7 @@ int open_quota_file(unsigned int quota_id, const char *name, int flags)
 
 int close_quota_file(int fd)
 {
+	fsync(fd);
 	flock(fd, LOCK_UN);
 	debug(LOG_DEBUG, "file %d was closed\n", fd);
 	return close(fd);
