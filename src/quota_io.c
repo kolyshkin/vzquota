@@ -1381,7 +1381,7 @@ int chksum_quota_file(int fd, chksum_t *chksum)
 	return 0;
 }
 
-int check_quota_file(int fd)
+int do_check_quota_file(int fd, int reformat)
 {
 	int rc;
 	struct qf_data qd;
@@ -1392,9 +1392,11 @@ int check_quota_file(int fd)
 
 	if (qd.version != QUOTA_CURRENT)
 	{
+		if (!reformat) {
+			debug(LOG_WARNING, "Quota file for id %d is in old quota format");
+			return -1;
+		}
 		/* convert quota */
-		debug(LOG_WARNING, "Quota file for id %d is in old quota "
-			"format, converting\n", quota_id);
 		if (reformat_quota(fd) < 0) {
 			free_quota_data(&qd);
 			return -1;
@@ -1413,6 +1415,12 @@ int check_quota_file(int fd)
 	}
 	free_quota_data(&qd);
 	return 0;
+}
+
+
+int check_quota_file(int fd)
+{
+	return do_check_quota_file(fd, 1);
 }
 
 
@@ -1437,9 +1445,11 @@ int open_quota_file(unsigned int quota_id, const char *name, int flags)
 		return fd;
 	}
 
-	if (flock(fd, LOCK_EX | LOCK_NB) < 0)
-		error(EC_LOCK, 0, "can't lock quota file, some quota operations "
-		      "are performing for id %d", quota_id);
+	if (flags & O_RDWR) {
+		if (flock(fd, LOCK_EX | LOCK_NB) < 0)
+			error(EC_LOCK, 0, "can't lock quota file, some quota operations "
+					"are performing for id %d", quota_id);
+	}
 	debug(LOG_DEBUG, "file %s %d was opened\n", name, fd);
 	return fd;
 }

@@ -299,7 +299,7 @@ int quotashow_proc(int argc, char **argv)
 	if (!((option & FL_VEID) || (option & FL_CONF_FILE)))
 		usage(quotashow_usage);
 
-	fd = open_quota_file(quota_id, config_file, O_RDWR);
+	fd = open_quota_file(quota_id, config_file, O_RDONLY);
 	if (fd < 0) {
 		if (errno == ENOENT)
 			error(EC_NOQUOTAFILE, 0, "Quota file must exist for show command");
@@ -309,7 +309,7 @@ int quotashow_proc(int argc, char **argv)
 
 
 	/* we must read and write whole files cause of checksum */
-	if (check_quota_file(fd) < 0
+	if (do_check_quota_file(fd, 0) < 0
 	    || read_quota_file(fd, &qd, IOF_ALL) < 0)
 		exit(EC_QUOTAFILE);
 

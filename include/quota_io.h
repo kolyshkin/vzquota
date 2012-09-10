@@ -130,6 +130,7 @@ int read_quota_file(int fd, struct qf_data *q, int io_flags);
 int write_quota_file(int fd, struct qf_data *q, int io_flags);
 
 int check_quota_file(int fd);
+int do_check_quota_file(int fd, int reformat);
 
 int get_quota_version(struct vz_quota_header *head);
 
