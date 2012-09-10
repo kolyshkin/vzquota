@@ -964,7 +964,7 @@ ugid_loop:
 
 			dq = lookup_dquot_(ugid_stat, buf[j].qi_id, buf[j].qi_type);
 			if (dq == NODQUOT) {
-				debug(LOG_DEBUG,"%5d: add ugid (%s %u)\n", 
+				debug(LOG_DEBUG,"%5d: add ugid (%s %u)\n",
 					j, type2name(buf[j].qi_type), buf[j].qi_id);
 				dq = add_dquot_(ugid_stat, buf[j].qi_id, buf[j].qi_type);
 			} else {
@@ -983,7 +983,7 @@ ugid_loop:
 		drop_ugid_by_flags(ugid_stat, UGID_LOADED);
 		/* handle deleted entries */
 		for (j = 0; j < (unsigned)rc; j++) {
-			debug(LOG_DEBUG,"%5d: mark ugid (%s %u) as loaded\n", 
+			debug(LOG_DEBUG,"%5d: mark ugid (%s %u) as loaded\n",
 				j, type2name(dq_buf[j]->obj.istat.qi_type),
 				dq_buf[j]->obj.istat.qi_id);
 			dq_buf[j]->obj.flags |= UGID_LOADED;

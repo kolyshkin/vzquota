@@ -35,7 +35,7 @@ OBJS_main = common.o quota_io.o syscall.o \
 	main.o stat.o quotaon.o \
 	quotacheck.o
 OBJS_check = common.o quota_io.o syscall.o \
-	quotacheck.o vzdqcheck.o 
+	quotacheck.o vzdqcheck.o
 OBJS_dump = common.o quota_io.o syscall.o \
 	vzdqdump.o
 OBJS_load = common.o quota_io.o syscall.o \

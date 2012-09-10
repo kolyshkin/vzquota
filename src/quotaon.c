@@ -405,7 +405,7 @@ static void quota_init()
 		 *
 		 * NB! Internal redesign is required - the config_file
 		 * pointer is global, but it's also used as an argument to some
-		 * functions. The same for some other variables. VZ3 vzquota 
+		 * functions. The same for some other variables. VZ3 vzquota
 		 * internal interface was simple, but now there are some
 		 * additional issues: compatibility, new options for example.
 		 */

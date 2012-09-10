@@ -213,7 +213,7 @@ void scan(struct scan_info *info, const char *mnt)
 		error(EC_SYSTEM, errno, "quota check : stat %s", mnt);
 
 	if (!S_ISDIR(root_st.st_mode))
-		error(EC_SYSTEM, errno, "quota check : path %s is not dir", 
+		error(EC_SYSTEM, errno, "quota check : path %s is not dir",
 				mnt);
 	if (statfs(mnt, &root_stfs) == -1)
 		error(EC_SYSTEM, errno, "quota check : statfs %s", mnt);
