@@ -147,7 +147,7 @@ int main(int argc, char **argv)
 
 				/* limits */
 				if (option & FL_DUMP_LIMITS)
-					printf("\t%u\t%u\t%u\t%u",
+					printf("\t%llu\t%llu\t%u\t%u",
 						ker2block(s->qi_stat.bsoftlimit),
 						ker2block(s->qi_stat.bhardlimit),
 						s->qi_stat.isoftlimit,

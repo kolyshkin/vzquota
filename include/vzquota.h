@@ -63,7 +63,7 @@ typedef __u64 qint;
 #define size2ker(x) ((qint) (x))
 #define block2ker(x) (((qint) (x)) << BLOCK_BITS)
 #define ker2size(x) ((__u64) (x))
-#define ker2block(x) ((__u32) (((x) + BLOCK_SIZE - 1) >> BLOCK_BITS))
+#define ker2block(x) ((__u64) (((x) + BLOCK_SIZE - 1) >> BLOCK_BITS))
 
 /* defines ration between quota and stat block size */
 #define STAT_PER_QUOTA (BLOCK_SIZE / STAT_BLOCK_SIZE)
