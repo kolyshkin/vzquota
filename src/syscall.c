@@ -38,10 +38,10 @@ long vzquotactl_syscall(
 	int fd;
 	struct vzctl_quotactl qu =
 	{
-	    cmd		: _cmd,
-	    quota_id	: _quota_id,
-	    qstat	: _qstat,
-	    ve_root	: (char *) _ve_root
+	    .cmd	= _cmd,
+	    .quota_id	= _quota_id,
+	    .qstat	= _qstat,
+	    .ve_root	= (char *) _ve_root
 	};
 
 //	ASSERT(_qstat);
@@ -75,11 +75,11 @@ long vzquotactl_ugid_syscall(
 	int fd;
 	struct vzctl_quotaugidctl qu =
 	{
-		cmd		: _cmd,
-		quota_id	: _quota_id,
-		ugid_index	: _ugid_index,
-		ugid_size	: _ugid_size,
-		addr		: _addr
+		.cmd		= _cmd,
+		.quota_id	= _quota_id,
+		.ugid_index	= _ugid_index,
+		.ugid_size	= _ugid_size,
+		.addr		= _addr
 	};
 
 	debug(LOG_DEBUG, "vzquotaugidctl ioctl start:cmd %d: id %d\n",
