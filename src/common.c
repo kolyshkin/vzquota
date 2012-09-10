@@ -499,6 +499,10 @@ int parse_options(int argc, char **argv, char *short_options,
 			config_file = optarg;
 			break;
 
+		case 'F':
+			option |= FL_DUMP_LIMITS_FIRST;
+			break;
+
 		case 'f':
 			option |= FL_FORCE;
 			break;

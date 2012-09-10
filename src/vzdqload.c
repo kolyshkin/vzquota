@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2000-2008, Parallels, Inc. All rights reserved.
+ *  Copyright (C) 2000-2012, Parallels, Inc. All rights reserved.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -37,13 +37,15 @@ static char dump_usage[] =
 "Loads user/group quota information from stdin into quota file.\n"
 "\t-c file\tuse given quota file\n"
 "Commands specify what user/group information to load:\n"
+"\t-F\tfirst level quota\n"
 "\t-G\tgrace time\n"
 "\t-U\tdisk limits\n"
 "\t-T\texpiration times\n"
 ;
 
-static char dump_short_options[] = "c:GUT";
+static char dump_short_options[] = "c:FGUT";
 static struct option dump_long_options[] = {
+	{"first", no_argument, NULL, 'F'},
 	{"quota-file", required_argument, NULL, 'c'},
 	{"gracetime", no_argument, NULL, 'G'},
 	{"limits", no_argument, NULL, 'U'},
@@ -143,10 +145,7 @@ int main(int argc, char **argv)
 //		if (rc < 0)
 //			exit(EC_QUOTAFILE);
 
-		close_quota_file(fd);
-		free_quota_data(&qd);
-
-		return EC_SUCCESS;
+		goto get_first_level;
 	}
 
 	/* ugid quota is on */
@@ -236,14 +235,58 @@ int main(int argc, char **argv)
 		q->info.buf_size = q->dquot_size;
 	}
 
-	/* we must read and write whole files cause of checksum */
-	rc = write_quota_file(fd, &qd, IOF_ALL);
-	if (rc < 0)
-		exit(EC_QUOTAFILE);
+get_first_level:
+	if (option & FL_DUMP_LIMITS_FIRST) {
+		unsigned long long bcurrent, bsoftlimit, bhardlimit;
+		unsigned long btime, bexpire;
+		unsigned icurrent, isoftlimit, ihardlimit;
+		unsigned long itime, iexpire;
+		struct vz_quota_stat *stat = &qd.stat;
+
+		rc = read_line(file, line, bufsize, 1, "%s", &label);
+		if (rc < 0 || rc == 0 || strncmp(label, FIRST_LEVEL_LABEL,
+			strlen(FIRST_LEVEL_LABEL)) != 0) {
+			fprintf(stderr, "Invalid input data: %s\n", line);
+			exit(EC_USAGE);
+		}
+
+		/* OK, read 1k-blocks */
+		rc = read_line(file, line, bufsize, 5, "%llu%llu%llu%lu%lu",
+			&bcurrent, &bsoftlimit, &bhardlimit, &btime, &bexpire);
+		if (rc < 0 || rc == 0) {
+			fprintf(stderr, "Invalid input data: %s\n", line);
+			exit(EC_USAGE);
+		}
+
+		/* read inodes */
+		rc = read_line(file, line, bufsize, 5, "%u%u%u%lu%lu",
+			&icurrent, &isoftlimit, &ihardlimit, &itime, &iexpire);
+		if (rc < 0 || rc == 0) {
+			fprintf(stderr, "Invalid input data: %s\n", line);
+			exit(EC_USAGE);
+		}
+
+		stat->dq_stat.bhardlimit = bhardlimit;
+		stat->dq_stat.bsoftlimit = bsoftlimit;
+		stat->dq_stat.bcurrent = bcurrent;
+		stat->dq_stat.btime = btime;
+		stat->dq_info.bexpire = bexpire;
+		stat->dq_stat.ihardlimit = ihardlimit;
+		stat->dq_stat.isoftlimit = isoftlimit;
+		stat->dq_stat.icurrent = icurrent;
+		stat->dq_stat.itime = itime;
+		stat->dq_info.iexpire = iexpire;
+	}
+
+	if (ugid_quota_status == 1 || option & FL_DUMP_LIMITS_FIRST) {
+		/* we must read and write whole files cause of checksum */
+		rc = write_quota_file(fd, &qd, IOF_ALL);
+		if (rc < 0)
+			exit(EC_QUOTAFILE);
+	}
 
 	close_quota_file(fd);
 	free_quota_data(&qd);
 
 	return EC_SUCCESS;
 }
-

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2000-2008, Parallels, Inc. All rights reserved.
+ *  Copyright (C) 2000-2012, Parallels, Inc. All rights reserved.
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,14 +36,16 @@ static char dump_usage[] =
 "\t-c file\tuse given quota file\n"
 "\t-f\tdump data from kernel rather than quota file\n"
 "Commands specify what user/group information to dump:\n"
+"\t-F\tfirst level quota\n"
 "\t-G\tgrace time\n"
 "\t-U\tdisk limits\n"
 "\t-T\texpiration times\n"
 ;
 
-static char dump_short_options[] = "c:fGUT";
+static char dump_short_options[] = "c:fFGUT";
 static struct option dump_long_options[] = {
 	{"quota-file", required_argument, NULL, 'c'},
+	{"first", no_argument, NULL, 'F'},
 	{"kernel", no_argument, NULL, 'f'},
 	{"gracetime", no_argument, NULL, 'G'},
 	{"limits", no_argument, NULL, 'U'},
@@ -100,8 +102,9 @@ int main(int argc, char **argv)
 
 	/* status of user/group quota */
 	printf("%s\t%u\n", STATUS_LABEL, ugid_quota_status);
+
 	if (!ugid_quota_status)
-		return EC_SUCCESS;
+		goto print_first_level;
 
 	q = &qd.ugid_stat;
 
@@ -166,7 +169,26 @@ int main(int argc, char **argv)
 		}
 	}
 
+print_first_level:
+	if (option & FL_DUMP_LIMITS_FIRST) {
+		struct vz_quota_stat *stat = &qd.stat;
+
+		printf(FIRST_LEVEL_LABEL "\n");
+
+		/* usage soft hard grace expire */
+		printf("%llu %llu %llu %lu %lu\n",
+		      stat->dq_stat.bcurrent, stat->dq_stat.bsoftlimit,
+		      stat->dq_stat.bhardlimit, stat->dq_stat.btime,
+		      stat->dq_info.bexpire);
+
+		/* usage soft hard grace expire */
+		printf("%u %u %u %lu %lu\n",
+		      stat->dq_stat.icurrent, stat->dq_stat.isoftlimit,
+		      stat->dq_stat.ihardlimit, stat->dq_stat.itime,
+		      stat->dq_info.iexpire);
+	}
+
 	free_quota_data(&qd);
+
 	return EC_SUCCESS;
 }
-

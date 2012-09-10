@@ -51,6 +51,7 @@
 #define FL_DUMP_GRACE	0x0100000
 #define FL_DUMP_LIMITS	0x0200000
 #define FL_DUMP_EXPTIME	0x0400000
+#define FL_DUMP_LIMITS_FIRST	0x0800000
 /* this is for setlimit */
 #define FL_L2_USER	0x0100000	/* set limits for user */
 #define FL_L2_GROUP	0x0200000	/* set limits for group */
@@ -64,7 +65,7 @@
 
 #define FL_LIMITS	(FL_BSL | FL_BHL | FL_BET | FL_ISL | FL_IHL | FL_IET)
 #define FL_UGIDS	(FL_SQT | FL_UGL)
-#define FL_DUMP		(FL_DUMP_GRACE | FL_DUMP_LIMITS | FL_DUMP_EXPTIME)
+#define FL_DUMP		(FL_DUMP_GRACE | FL_DUMP_LIMITS | FL_DUMP_EXPTIME | FL_DUMP_LIMITS_FIRST)
 
 
 extern __u32 option;

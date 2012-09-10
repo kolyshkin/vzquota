@@ -10,12 +10,14 @@ vzdqdump, vzdqload \- dump, load user/group quotas
 .OP -G
 .OP -U
 .OP -T
+.OP -F
 .SY vzdqload
 [\fIgeneral_options\fP] \fIquota_id\fP
 .OP -c quota_file
 .OP -G
 .OP -U
 .OP -T
+.OP -F
 .YS
 
 .SH DESCRIPTION
@@ -61,6 +63,9 @@ Dump (load) disk limits of users/groups.
 .TP
 .BR -T ,\  --exptimes
 Dump (load) expiration times of users/groups.
+.TP
+.BR -F ,\ --first
+Dump (load) first level quota.
 
 .SH EXIT STATUS
 See \fBvzquota\fP(8).

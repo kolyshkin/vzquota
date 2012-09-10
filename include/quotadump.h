@@ -19,6 +19,7 @@
 #ifndef __QUOTADUMP_H__
 #define __QUOTADUMP_H__
 
+#define	FIRST_LEVEL_LABEL	"first_level_quota:"
 #define	STATUS_LABEL	"ugid_quota_status:"
 #define GRACE_LABEL	"grace_time:"
 #define NUMBER_LABEL	"ugid_number:"
