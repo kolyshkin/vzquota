@@ -32,6 +32,10 @@
 #include "quota_io.h"
 #include "quotacheck.h"
 
+#ifndef EXT4_SUPER_MAGIC
+#define EXT4_SUPER_MAGIC 0xEF53
+#endif
+
 /* From ext4.h */
 #define EXT4_IOC_ALLOC_DA_BLKS		_IO('f', 12)
 static int ext4_sync_fd(int fd)
