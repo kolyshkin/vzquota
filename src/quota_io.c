@@ -758,8 +758,8 @@ int quota_syscall_off(struct qf_data *qd)
 		}
 		rc = vzquotactl_syscall(cmd, quota_id, NULL, buf);
 		if (rc >= 0) break;
-		if (errno == EALREADY) { /* quota is created and off */
-			broken = 1;
+		if (errno == EALREADY || errno == EIO) {/* quota is created and off */
+			broken = errno;
 			goto destroy;
 		}
 		if (errno == ENOENT) return rc;		/* quota is not created */
@@ -873,7 +873,7 @@ destroy:
 	if (rc < 0)
 		error(EC_VZCALL, errno, "Quota destroy syscall for id %d", quota_id);
 	if (broken) {
-		errno = EALREADY;
+		errno = broken;
 		return -1;
 	}
 

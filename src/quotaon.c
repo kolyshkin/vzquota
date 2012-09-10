@@ -579,10 +579,14 @@ static void quota_off()
 	rc = quota_syscall_off(&qd);
 
 	if (rc < 0) {
-		/* quota is off or broken */
-		if (errno == EALREADY) {
+		/* quota is off or (broken or exceeded) */
+		if (errno == EALREADY || errno == EIO) {
 			/* quota is broken */
-			debug(LOG_WARNING, "Quota is broken for id %d\n", quota_id);
+			if (errno == EALREADY)
+				debug(LOG_WARNING, "Quota is broken for id %d\n", quota_id);
+			else /* quota exceeded */
+				debug(LOG_WARNING, "Quota off syscall for id %d: Input/output error.\nQuota exceeded?\n",  quota_id);
+
 			if (force) {
 				free_quota_data(&qd);
 				debug(LOG_INFO, "Quota was switched off for id %d\n", quota_id);
