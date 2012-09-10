@@ -45,4 +45,8 @@ $(TARBALL): clean-all
 	mv ../$(TARBALL) .
 	rm -f ../$(NAMEVER)
 
+rpms: tar
+	rpmbuild -ta $(TARBALL) ${RPMB_ARGS}
+.PHONY: rpms
+
 -include .depend
