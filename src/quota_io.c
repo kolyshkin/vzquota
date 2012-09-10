@@ -1082,11 +1082,26 @@ static void vzdqinfo2dqinfo(struct dq_info * info,
 static int quotactl_syscall(int cmd, int type, const char * root_path, int id, void * data)
 {
 	char path[PATH_MAX];
+	int err, qerr = 0;
+	int fd;
+
 	/* we should chroot to VE priv dir */
 	sprintf(path, "%s/root", root_path);
-	if (chroot(path) != 0)
+	fd = open("/", O_RDONLY);
+	if (fd < 0)
 		return -1;
-	return quotactl(QCMD(cmd, type), VZFS_DEV, id, data);
+	if ((err = chroot(path)) != 0)
+		goto out;
+	qerr = quotactl(QCMD(cmd, type), VZFS_DEV, id, data);
+	if ((err = fchdir(fd)) != 0)
+		goto out;
+	err = chroot(".");
+out:
+	close(fd);
+
+	if (qerr != 0)
+		return qerr;
+	return err;
 }
 
 int vzquotactl_ugid_setgrace(struct qf_data *data, int type, struct dq_info *vzdqinfo)
