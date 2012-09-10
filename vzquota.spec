@@ -1,6 +1,6 @@
 Summary: Virtuozzo/OpenVZ disk quota control utility
 Name: vzquota
-Version: 3.0.12
+Version: 3.1
 Release: 1%{?dist}
 License: GPL
 Group: System Environment/Kernel
@@ -40,6 +40,27 @@ rm -rf $RPM_BUILD_ROOT
 %attr(644,root,root) %{_mandir}/man8/vzdqload.8*
 
 %changelog
+* Tue Sep 11 2012 Kir Kolyshkin <kir@openvz.org> - 3.1-1
+- New functionality:
+- * vzdqdump, vzdqload: add -F to dump/load first level quotas
+- Fixes:
+- * Make ext4 delalloc work with vzquota (#2035)
+- * fix quota init fail then run from deleted directory
+- * fix building with fresh toolchain (#1357 etc.)
+- * skip quota file locking on 'vzquota show' action
+- * fix to work with more than 1 TB quotas
+- * correct exit code in case quota file does not exist
+- * minor code style fixes
+- * whitespace cleanups
+- Improvements:
+- * quota on: more info on failed quota on with EEXIST
+- * quota off: enable detailed info on fail by default
+- * quota off: add processing EIO
+- * man/*: assorted fixes and formatting improvements
+- * man/vzquota: minor improvements (#2310)
+- * vzdqdump, vzdqload: fix typo in usage
+- * Makefile: Don't strip executable, respect LDFLAGS (#1191)
+
 * Thu Mar 06 2008 Kir Kolyshkin <kir@openvz.org> - 3.0.12-1
 - updated description, VE->container terminology change
 
