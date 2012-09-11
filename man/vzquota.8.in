@@ -16,7 +16,7 @@ These are per-container disk quotas set from Virtuozzo/OpenVZ host system.
 
 The \fIcommand\fR can be one of the following:
 \fBinit\fP, \fBdrop\fP, \fBon\fP, \fBoff\fP, \fBsetlimit\fP, \fBsetlimit2\fP,
-\fBstat\fP, \fBshow\fP.
+\fBreload2\fR, \fBstat\fP, \fBshow\fP.
 
 The \fIquota_id\fP must be numeric-only identifier. Note, that quota ID is not
 the same as container ID (CTID). One container can mount several filesystems
@@ -92,6 +92,9 @@ will be rescanned and usage updated.
 Set second-level quota parameters. Applies new parameters immediately
 if quota with given quota_id is running and second-level quota is
 on. Stores new limits in the quota file.
+.TP
+.B reload2
+Reload second-level quota limits from quota file for given quota_id.
 .TP
 .B stat
 Show usage statistics and update it in quota file. Option \fB-f\fP causes to
