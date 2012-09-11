@@ -117,7 +117,7 @@ accepted in \fBon\fP and \fBsetlimit\fP commands.
 Enables or disables user/group based quota inside the container. Here \fB1\fP
 means to enable, and \fB0\fP - to disable.
 By default user/group quota is disabled. This option is accepted by
-\fBinit\fP and \fBon\fP commands.
+\fBinit\fP, \fBon\fP and \fBsetlimit\fR commands.
 .TP
 .BI \-u\  user_id
 For \fBsetlimit2\fP command only. Limits will be applied to the specified
