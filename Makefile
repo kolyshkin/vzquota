@@ -38,7 +38,7 @@ tar: $(TARBALL)
 $(TARBALL): clean-all
 	rm -f ../$(NAMEVER)
 	ln -s `pwd | awk -F / '{print $$NF}'` ../$(NAMEVER)
-	tar --directory .. --exclude-vcs --exclude .depend \
+	tar --directory .. --exclude .git --exclude .depend \
 		--exclude-from .gitignore \
 		-cvhjf ../$(TARBALL) $(NAMEVER)
 	rm -f $(TARBALL)
