@@ -22,7 +22,7 @@ CFLAGS="$RPM_OPT_FLAGS" make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT MANDIR=%{_mandir}
+make install DESTDIR=$RPM_BUILD_ROOT
 
 %clean
 rm -rf $RPM_BUILD_ROOT

@@ -53,7 +53,6 @@ depend: $(OBJS:.o=.c)
 
 install: $(PROGS)
 	$(INSTALL) -d $(DESTDIR)$(SBINDIR)
-	$(INSTALL) -d $(DESTDIR)$(MANDIR)/man8
 	$(INSTALL) -d $(DESTDIR)$(VARDIR)/vzquota
 	for file in $(PROGS); do \
 		$(INSTALL) -m 755 $$file $(DESTDIR)$(SBINDIR)/$$file; \
