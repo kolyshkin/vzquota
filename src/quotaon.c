@@ -248,7 +248,7 @@ static void check_limits(struct qf_data *qd, int what_given)
 
 	if ((stat->bhardlimit < stat->bsoftlimit)
 				&& (what_given ? (option & (FL_BHL | FL_BSL)) : 1))
-		error(EC_USAGE, 0, "block_hard_limit [%u] < block_soft_limit [%u]\n",
+		error(EC_USAGE, 0, "block_hard_limit [%llu] < block_soft_limit [%llu]\n",
 			(unsigned long long)ker2block(stat->bhardlimit),
 			(unsigned long long)ker2block(stat->bsoftlimit));
 
@@ -259,12 +259,12 @@ static void check_limits(struct qf_data *qd, int what_given)
 
 	if ((stat->bhardlimit < stat->bcurrent)
 				&& (what_given ? (option & FL_BHL) : 1))
-		debug(LOG_WARNING, "block_hard_limit [%u] < block_current_usage [%u]\n",
+		debug(LOG_WARNING, "block_hard_limit [%llu] < block_current_usage [%llu]\n",
 			(unsigned long long)ker2block(stat->bhardlimit),
 			(unsigned long long)ker2block(stat->bcurrent));
 	else if ((stat->bsoftlimit < stat->bcurrent)
 				&& (what_given ? (option & FL_BSL) : 1))
-		debug(LOG_WARNING, "block_soft_limit [%u] < block_current_usage [%u]\n",
+		debug(LOG_WARNING, "block_soft_limit [%llu] < block_current_usage [%llu]\n",
 			(unsigned long long)ker2block(stat->bsoftlimit),
 			(unsigned long long)ker2block(stat->bcurrent));
 
@@ -657,7 +657,7 @@ static void quota_drop()
 		/* quota is on */
 		debug(LOG_WARNING, "Quota is running for id %d\n", quota_id);
 		if (option & FL_FORCE)
-			debug(LOG_WARNING, "Force quota file delete\n", quota_id);
+			debug(LOG_WARNING, "Force quota if %d file delete\n", quota_id);
 		else
 			exit(EC_RUN);
 	}

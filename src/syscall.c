@@ -53,7 +53,7 @@ long vzquotactl_syscall(
 	if (fd < 0)
 		error(EC_VZCALL, errno, "can't open vzctl device '%s'", VZCTL_DEVICE);
 
-	debug(LOG_DEBUG, "attempt new ioctl[%d]\n", VZCTL_QUOTA_CTL);
+	debug(LOG_DEBUG, "attempt new ioctl[%lu]\n", (unsigned long)VZCTL_QUOTA_CTL);
 	rc = ioctl(fd, VZCTL_QUOTA_NEW_CTL, &qu);
 	debug(LOG_DEBUG, "vzquotactl ioctl end:cmd %d: id %d: status %d\n",
 		_cmd, _quota_id, rc);

@@ -1372,7 +1372,8 @@ int chksum_quota_file(int fd, chksum_t *chksum)
 	fsize = lseek(fd, 0, SEEK_END);
 	if (fsize <= 0) return EC_QUOTAFILE;
 	fsize -= sizeof(chksum_t);
-	debug(LOG_DEBUG, "Computing hash of quota file (first %u bytes)\n", fsize);
+	debug(LOG_DEBUG, "Computing hash of quota file (first %lu bytes)\n",
+			(unsigned long)fsize);
 
 	memset(chksum, 0, sizeof(chksum_t));
 
@@ -1408,7 +1409,7 @@ int do_check_quota_file(int fd, int reformat)
 	if (qd.version != QUOTA_CURRENT)
 	{
 		if (!reformat) {
-			debug(LOG_WARNING, "Quota file for id %d is in old quota format");
+			debug(LOG_WARNING, "Quota file for id %d is in old quota format\n", quota_id);
 			return -1;
 		}
 		/* convert quota */
@@ -1593,9 +1594,9 @@ int read_quota_file(int fd, struct qf_data *q, int io_flags)
 					}
 					for (j = 0; j < size; j++) {
 						if (buf[j].istat.qi_type >= MAXQUOTAS)
-							error(EC_QUOTAFILE, 0, "%u ugid object has incorrect type: id=%u, type=%u; "
+							error(EC_QUOTAFILE, 0, "%lu ugid object has incorrect type: id=%u, type=%u; "
 								"quota file is corrupted",
-								i*b_size + j, buf[j].istat.qi_id, buf[j].istat.qi_type);
+								(unsigned long)i*b_size + j, buf[j].istat.qi_id, buf[j].istat.qi_type);
 						dq = lookup_dquot(&(q->ugid_stat), &buf[j]);
 						if (dq == NODQUOT)
 							dq = add_dquot(&(q->ugid_stat), &buf[j]);

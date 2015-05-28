@@ -132,7 +132,7 @@ void *xmalloc(size_t size)
 	void *ptr;
 	ptr = malloc(size);
 	if (!ptr)
-		error(EC_SYSTEM, errno, "not enough memory for %d bytes", size);
+		error(EC_SYSTEM, errno, "not enough memory for %zd bytes", size);
 	memset(ptr, 0, size);
 	return (ptr);
 }
@@ -142,7 +142,7 @@ void *xrealloc(void *p, size_t size)
 	void *ptr;
 	ptr = realloc(p, size);
 	if (!ptr)
-		error(EC_SYSTEM, errno, "not enough memory for %d bytes", size);
+		error(EC_SYSTEM, errno, "not enough memory for %zd bytes", size);
 	return (ptr);
 }
 

@@ -134,7 +134,8 @@ extern int batch_mode;
 
 #define debug(level, fmt, args...) \
   (debug_level < level ? (void)0 : debug_print(level, fmt, ##args))
-void error(int status, int errnum, char *oformat, ...);
+void error(int status, int errnum, char *oformat, ...)
+	__attribute__ ((__format__ (__printf__, 3, 4)));
 
 #ifdef ASSERT
 #undef ASSERT
@@ -151,7 +152,8 @@ void error(int status, int errnum, char *oformat, ...);
     } while(0)
 #endif
 
-void debug_print(int level, char *oformat, ...);
+void debug_print(int level, char *oformat, ...)
+	__attribute__ ((__format__ (__printf__, 2, 3)));
 void vdebug_print(int level, char *oformat, va_list pvar);
 
 void *xmalloc(size_t size);
