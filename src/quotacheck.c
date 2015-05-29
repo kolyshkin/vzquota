@@ -258,8 +258,8 @@ void scan(struct scan_info *info, const char *mnt)
 	free_lists(info);
 
 	debug(LOG_INFO,
-	      "scan mount point end :%s:inodes %d:size %lld:files %d:dirs %d:hard_links %d\n",
-	      mnt, info->inodes, info->size, info->files,
+	      "scan mount point end :%s:inodes %d:size %llu:files %d:dirs %d:hard_links %d\n",
+	      mnt, info->inodes, (unsigned long long)info->size, info->files,
 	      info->dirs, info->hard_links);
 	return;
 }
