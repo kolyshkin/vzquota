@@ -1391,7 +1391,7 @@ int chksum_quota_file(int fd, chksum_t *chksum)
 		for (j = 0; j < b_size / sizeof(chksum_t); j++)
 			*chksum ^= buf[j];
 	}
-	debug(LOG_DEBUG, "Hash is 64bit number %llu\n", *chksum);
+	debug(LOG_DEBUG, "Hash is 64bit number %llu\n", (unsigned long long)*chksum);
 
 	free(buf);
 	return 0;
@@ -1622,7 +1622,7 @@ int read_quota_file(int fd, struct qf_data *q, int io_flags)
 		if (fsize <= 0) return EC_QUOTAFILE;
 		err = read_field(fd, &q->chksum, sizeof(q->chksum), fsize - sizeof(q->chksum));
 		if (err < 0) return err;
-		debug(LOG_DEBUG, "Checksum is 64bit number %llu\n", q->chksum);
+		debug(LOG_DEBUG, "Checksum is 64bit number %llu\n", (unsigned long long)q->chksum);
 	}
 
 	debug(LOG_DEBUG, "Quota file was read\n");
