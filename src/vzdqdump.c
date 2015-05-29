@@ -151,8 +151,8 @@ int main(int argc, char **argv)
 				/* limits */
 				if (option & FL_DUMP_LIMITS)
 					printf("\t%llu\t%llu\t%u\t%u",
-						ker2block(s->qi_stat.bsoftlimit),
-						ker2block(s->qi_stat.bhardlimit),
+						(unsigned long long)ker2block(s->qi_stat.bsoftlimit),
+						(unsigned long long)ker2block(s->qi_stat.bhardlimit),
 						s->qi_stat.isoftlimit,
 						s->qi_stat.ihardlimit);
 
@@ -177,8 +177,10 @@ print_first_level:
 
 		/* usage soft hard grace expire */
 		printf("%llu %llu %llu %lu %lu\n",
-		      stat->dq_stat.bcurrent, stat->dq_stat.bsoftlimit,
-		      stat->dq_stat.bhardlimit, stat->dq_stat.btime,
+		      (unsigned long long)stat->dq_stat.bcurrent,
+		      (unsigned long long)stat->dq_stat.bsoftlimit,
+		      (unsigned long long)stat->dq_stat.bhardlimit,
+		      stat->dq_stat.btime,
 		      stat->dq_info.bexpire);
 
 		/* usage soft hard grace expire */

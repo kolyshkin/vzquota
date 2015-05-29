@@ -249,7 +249,8 @@ static void check_limits(struct qf_data *qd, int what_given)
 	if ((stat->bhardlimit < stat->bsoftlimit)
 				&& (what_given ? (option & (FL_BHL | FL_BSL)) : 1))
 		error(EC_USAGE, 0, "block_hard_limit [%u] < block_soft_limit [%u]\n",
-		      ker2block(stat->bhardlimit), ker2block(stat->bsoftlimit));
+			(unsigned long long)ker2block(stat->bhardlimit),
+			(unsigned long long)ker2block(stat->bsoftlimit));
 
 	if ((stat->ihardlimit < stat->isoftlimit)
 				&& (what_given ? (option & (FL_IHL | FL_ISL)) : 1))
@@ -259,11 +260,13 @@ static void check_limits(struct qf_data *qd, int what_given)
 	if ((stat->bhardlimit < stat->bcurrent)
 				&& (what_given ? (option & FL_BHL) : 1))
 		debug(LOG_WARNING, "block_hard_limit [%u] < block_current_usage [%u]\n",
-		      ker2block(stat->bhardlimit), ker2block(stat->bcurrent));
+			(unsigned long long)ker2block(stat->bhardlimit),
+			(unsigned long long)ker2block(stat->bcurrent));
 	else if ((stat->bsoftlimit < stat->bcurrent)
 				&& (what_given ? (option & FL_BSL) : 1))
 		debug(LOG_WARNING, "block_soft_limit [%u] < block_current_usage [%u]\n",
-			ker2block(stat->bsoftlimit), ker2block(stat->bcurrent));
+			(unsigned long long)ker2block(stat->bsoftlimit),
+			(unsigned long long)ker2block(stat->bcurrent));
 
 	if ((stat->ihardlimit < stat->icurrent)
 				&& (what_given ? (option & FL_IHL) : 1))

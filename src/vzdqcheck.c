@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 
 	printf("quota usage for %s\n", mount_point);
 	printf("%11s%11s\n","blocks", "inodes");
-	printf("%11llu%11u\n", ker2block(info.size), info.inodes);
+	printf("%11llu%11u\n", (unsigned long long)ker2block(info.size), info.inodes);
 	exit(0);
 }
 

@@ -88,8 +88,10 @@ void print_status(struct qf_data *qd)
 	if (batch_mode) {
 		/* usage soft hard grace expire */
 		printf("%14llu %14llu %14llu %14lu %14lu\n",
-		      ker2block(s->bcurrent), ker2block(s->bsoftlimit), ker2block(s->bhardlimit),
-		      s->btime, i->bexpire);
+			(unsigned long long)ker2block(s->bcurrent),
+			(unsigned long long)ker2block(s->bsoftlimit),
+			(unsigned long long)ker2block(s->bhardlimit),
+			s->btime, i->bexpire);
 		/* usage soft hard grace expire */
 		printf("%14u %14u %14u %14lu %14lu\n",
 		      s->icurrent, s->isoftlimit, s->ihardlimit,
@@ -100,9 +102,10 @@ void print_status(struct qf_data *qd)
 		       "resource", "usage", "softlimit", "hardlimit", "grace");
 		difftime2str(s->btime, buf);
 		printf("%11s %14llu%c %14llu %14llu %8s\n",
-		       "1k-blocks", ker2block(s->bcurrent),
+		       "1k-blocks", (unsigned long long)ker2block(s->bcurrent),
 		       b_overlim(s->bcurrent, s->bsoftlimit, s->bhardlimit),
-		       ker2block(s->bsoftlimit), ker2block(s->bhardlimit), buf);
+		       (unsigned long long)ker2block(s->bsoftlimit),
+		       (unsigned long long)ker2block(s->bhardlimit), buf);
 
 		difftime2str(s->itime, buf);
 		printf("%11s %14u%c %14u %14u %8s\n",
@@ -208,9 +211,9 @@ void print_ugid_status(struct qf_data *qd)
 		}
 		printf("%-11u %5s %9s %11llu %11llu %11llu %8s %6s\n",
 			s->qi_id, type2name(s->qi_type), "1k-blocks",
-			ker2block(s->qi_stat.bcurrent),
-			ker2block(s->qi_stat.bsoftlimit),
-			ker2block(s->qi_stat.bhardlimit),
+			(unsigned long long)ker2block(s->qi_stat.bcurrent),
+			(unsigned long long)ker2block(s->qi_stat.bsoftlimit),
+			(unsigned long long)ker2block(s->qi_stat.bhardlimit),
 			buf1, status);
 
 		/* inodes */
